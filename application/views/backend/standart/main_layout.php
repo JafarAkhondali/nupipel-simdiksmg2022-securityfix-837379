@@ -84,7 +84,7 @@
   <?= $this->cc_html->getScriptFileTop(); ?>
 </head>
 
-<body class="sidebar-mini skin-black fixed web-body">
+<body class="sidebar-mini skin-red-light fixed web-body">
   <div class="wrapper" id="app">
 
     <header class="main-header">
