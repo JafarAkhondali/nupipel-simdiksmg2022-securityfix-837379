@@ -34,12 +34,13 @@
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <div class="form-group">
                             <label>Tahun ajaran</label>
-                            <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran">
-                                <option>- Pilih Tahun Ajaran -</option>
+                            <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran" required>
+                                <option value="">- Pilih Tahun -</option>
                                 <option value="2022">2022</option>
                                 <option value="2023">2023</option>
                                 <option value="2024">2024</option>
                                 <option value="2025">2025</option>
+                                <option value="2026">2026</option>
                             </select>
                         </div>
                         <div class="form-group">
