@@ -26,7 +26,7 @@
 
                         if ($this->session->flashdata('error')) { ?>
                             <div class="alert alert-danger" role="alert"><?= $this->session->flashdata('error'); ?></div>
-                        <? } else { ?>
+                        <?php } else { ?>
                             <div class="alert alert-info" role="alert"><?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>

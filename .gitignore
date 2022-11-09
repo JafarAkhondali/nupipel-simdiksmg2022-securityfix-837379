@@ -52,4 +52,3 @@ phploy.ini
 *.sublime-project
 cc-content/extensions/backup-restore-db
 cc-content/extensions/disquss
-.gitignore
