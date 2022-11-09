@@ -21,8 +21,16 @@ class Import extends MY_Controller
 
     public function import_excel()
     {
-        // $this->load->library('excel');
-        if (isset($_FILES["fileExcel"]["name"])) {
+        $config['allowed_types']    = 'xls|xlsx';
+        $this->load->library('upload', $config);
+        $temp = explode(".", $_FILES["file"]["name"]);
+        // $extension = end($temp);
+        $mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
+        $tahun = $this->input->post('tahun_ajaran');
+
+        if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+
             $path = $_FILES["fileExcel"]["tmp_name"];
             $object = PHPExcel_IOFactory::load($path);
             foreach ($object->getWorksheetIterator() as $worksheet) {
@@ -180,28 +188,24 @@ class Import extends MY_Controller
                     $data_rombel[] = array(
                         // 'id_peserta_didik'    => $nipd,
                         'nisn'    => $nisn,
-                        'rombel'    => $rombel
+                        'rombel'    => $rombel,
+                        'tahun' => $tahun
                     );
                 }
             }
-            $this->load->model('ImportModel');
-            $insert_pesertadidik = $this->ImportModel->insert_PesertaDidik($data_pesertadidik);
-            $insert_detail_pesertadidik = $this->ImportModel->insertDetail_PesertaDidik($data_pesertadidik_detail);
-            $insert_data_orangtua = $this->ImportModel->insert_Data_Orangtua($data_orangtua);
-            $insert_data_wali = $this->ImportModel->insert_Data_Wali($data_wali);
-            $insert_data_rombel = $this->ImportModel->insert_Data_rombel($data_rombel);
 
-            if ($insert_pesertadidik && $insert_detail_pesertadidik) {
-                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"></span> Data Berhasil di Import ke Database');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else if ($insert_data_orangtua && $insert_data_wali) {
-                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"></span> Data Berhasil di Import ke Database');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else if ($insert_data_rombel) {
-                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"></span> Data Berhasil di Import ke Database');
+            if ($highestColumn == 'BN') {
+                $this->load->model('ImportModel');
+                $insert_pesertadidik = $this->ImportModel->insert_PesertaDidik($data_pesertadidik);
+                $insert_detail_pesertadidik = $this->ImportModel->insertDetail_PesertaDidik($data_pesertadidik_detail);
+                $insert_data_orangtua = $this->ImportModel->insert_Data_Orangtua($data_orangtua);
+                $insert_data_wali = $this->ImportModel->insert_Data_Wali($data_wali);
+                $insert_data_rombel = $this->ImportModel->insert_Data_rombel($data_rombel);
+
+                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"></span> Data Berhasil di Import ke Database' . $highestRow . $highestColumn);
                 redirect($_SERVER['HTTP_REFERER']);
             } else {
-                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-remove"></span> Terjadi Kesalahan');
+                $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"></span> Terjadi Kesalahan, Dokumen tidak sesuai template');
                 redirect($_SERVER['HTTP_REFERER']);
             }
         } else {
