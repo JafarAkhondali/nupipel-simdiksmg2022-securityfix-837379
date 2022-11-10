@@ -55,6 +55,6 @@ class ImportModel extends CI_Model
     public function getData()
     {
         $this->db->select('*');
-        return $this->db->get('tbl_data2')->result_array();
+        return $this->db->get('pd_peserta_didik')->result_array();
     }
 }

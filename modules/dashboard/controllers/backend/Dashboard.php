@@ -38,6 +38,7 @@ class Dashboard extends Admin
 
 	public function upload()
 	{
+
 		if (!$this->aauth->is_allowed('dashboard')) {
 			redirect('/', 'refresh');
 		}

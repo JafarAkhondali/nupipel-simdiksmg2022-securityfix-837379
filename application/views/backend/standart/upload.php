@@ -25,12 +25,18 @@
                     <?php if (!empty($this->session->flashdata('status')) || !empty($this->session->flashdata('error'))) {
 
                         if ($this->session->flashdata('error')) { ?>
-                            <div class="alert alert-danger" role="alert"><?= $this->session->flashdata('error'); ?></div>
+                            <script>
+                                toastr["error"]("Error, Terjadi kesalahan upload file")
+                            </script>
+                            <div class="alert alert-danger" role="alert"> <?= $this->session->flashdata('error'); ?></div>
                         <? } else { ?>
-                            <div class="alert alert-info" role="alert"><?= $this->session->flashdata('status'); ?></div>
+                            <script>
+                                toastr["success"]("File Berhasil diupload")
+                            </script>
+                            <div class="alert alert-info" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>
-                    <form action="<?= base_url('Import/import_excel'); ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= base_url('Import/import_excel'); ?>" method="post" enctype="multipart/form-data" name="form_upload" id="form_upload">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <div class="form-group">
                             <label>Tahun ajaran</label>
@@ -51,10 +57,50 @@
                             <button class='btn btn-success' type="submit">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Import
-                            </button>
+                            </button>&nbsp;&nbsp;
+                            <span class="loading loading-hide">
+                                <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
+                                <i><?= 'Harap Tunggu sedang proses upload data'; ?></i>
+                            </span>
                         </div>
                     </form>
                 </div>
+
+                <!-- <div class="col-md-6 col-md-offset-3" style="margin-top: 50px;">
+                    <h3>Daftar Data</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>Jurusan</th>
+                                    <th>Angkatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $no = 1;
+                                foreach ($list_data as $row) {
+                                ?>
+                                    <tr>
+                                        <td><?= $no++; ?></td>
+                                        <td><?= $row['nisn'] ?></td>
+                                        <td><?= $row['nama'] ?></td>
+                                        <td><?= $row['nipd'] ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> -->
             </div>
         </div>
 </section>
+
+
+<script>
+    $("#form_upload").on("submit", function() {
+        $('.loading').show();
+    });
+</script>

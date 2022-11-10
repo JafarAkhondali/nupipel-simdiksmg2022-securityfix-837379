@@ -65,7 +65,8 @@
     $(document).ready(function() {
 
       toastr.options = {
-        "positionClass": "toast-top-center",
+        "positionClass": "toast-bottom-right",
+        "progressBar": true
       }
 
       var f_message = '<?= $this->session->flashdata('f_message'); ?>';
@@ -84,7 +85,7 @@
   <?= $this->cc_html->getScriptFileTop(); ?>
 </head>
 
-<body class="sidebar-mini skin-red-light fixed web-body">
+<body class="sidebar-mini skin-black-light fixed web-body">
   <div class="wrapper" id="app">
 
     <header class="main-header">
