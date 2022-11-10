@@ -9,7 +9,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  *| For see your board
  *|
  */
-class Dashboard extends Admin
+class Import extends Admin
 {
 
 	public function __construct()
@@ -17,23 +17,14 @@ class Dashboard extends Admin
 		parent::__construct();
 	}
 
-	public function index()
-	{
-		if (!$this->aauth->is_allowed('dashboard')) {
-			redirect('/', 'refresh');
-		}
-		$data = [];
-		$this->render('backend/standart/dashboard', $data);
-	}
-
-	public function chart()
+	public function pd()
 	{
 		if (!$this->aauth->is_allowed('dashboard')) {
 			redirect('/', 'refresh');
 		}
 
 		$data = [];
-		$this->render('backend/standart/chart', $data);
+		$this->render('backend/standart/upload', $data);
 	}
 }
 
