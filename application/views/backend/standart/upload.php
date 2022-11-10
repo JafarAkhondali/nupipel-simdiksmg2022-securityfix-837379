@@ -29,7 +29,7 @@
                                 toastr["error"]("Error, Terjadi kesalahan upload file")
                             </script>
                             <div class="alert alert-danger" role="alert"> <?= $this->session->flashdata('error'); ?></div>
-                        <? } else { ?>
+                        <?php } else { ?>
                             <script>
                                 toastr["success"]("File Berhasil diupload")
                             </script>

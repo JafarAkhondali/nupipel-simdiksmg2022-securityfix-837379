@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,40 +30,41 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
+
 <body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href=""><b><?= cclang('login'); ?></b> <?= get_option('site_name'); ?></a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    <p class="login-box-msg"><?= cclang('sign_to_start_your_session'); ?></p>
-    <?php if(isset($error) AND !empty($error)): ?>
-         <div class="callout callout-error"  style="color:#C82626">
-              <h4><?= cclang('error'); ?>!</h4>
-              <p><?= $error; ?></p>
-            </div>
-    <?php endif; ?>
-    <?php
-    $message = $this->session->flashdata('f_message'); 
-    $type = $this->session->flashdata('f_type'); 
-    if ($message):
-    ?>
-   <div class="callout callout-<?= $type; ?>"  style="color:#C82626">
-        <p><?= $message; ?></p>
-      </div>
-    <?php endif; ?>
-     <?= form_open('', [
-        'name'    => 'form_login', 
-        'id'      => 'form_login', 
+  <div class="login-box">
+    <div class="login-logo">
+      <a href=""><b><?= cclang('login'); ?></b> <?= get_option('site_name'); ?></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+      <p class="login-box-msg"><?= cclang('sign_to_start_your_session'); ?></p>
+      <?php if (isset($error) and !empty($error)) : ?>
+        <div class="callout callout-error" style="color:#C82626">
+          <h4><?= cclang('error'); ?>!</h4>
+          <p><?= $error; ?></p>
+        </div>
+      <?php endif; ?>
+      <?php
+      $message = $this->session->flashdata('f_message');
+      $type = $this->session->flashdata('f_type');
+      if ($message) :
+      ?>
+        <div class="callout callout-<?= $type; ?>" style="color:#C82626">
+          <p><?= $message; ?></p>
+        </div>
+      <?php endif; ?>
+      <?= form_open('', [
+        'name'    => 'form_login',
+        'id'      => 'form_login',
         'method'  => 'POST'
       ]); ?>
-      <div class="form-group has-feedback <?= form_error('username') ? 'has-error' :''; ?>">
-        <input type="email" class="form-control" placeholder="Email" name="username" value="<?= set_value('username', 'admin@admin.com'); ?>">
+      <div class="form-group has-feedback <?= form_error('username') ? 'has-error' : ''; ?>">
+        <input type="email" class="form-control" placeholder="Email" name="username" value="<?= set_value('username', 'simdiksmg@semarangkota.go.id'); ?>">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
-      <div class="form-group has-feedback <?= form_error('password') ? 'has-error' :''; ?>">
-        <input type="password" class="form-control" placeholder="Password" name="password" value="admin123">
+      <div class="form-group has-feedback <?= form_error('password') ? 'has-error' : ''; ?>">
+        <input type="password" class="form-control" placeholder="Password" name="password" value="">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -79,37 +81,38 @@
         </div>
         <!-- /.col -->
       </div>
-    <?= form_close(); ?>
+      <?= form_close(); ?>
 
-    <!-- /.social-auth-links -->
+      <!-- /.social-auth-links -->
 
-    <a href="<?= site_url('administrator/forgot-password'); ?>"><?= cclang('i_forgot_my_password'); ?></a><br>
-    <a href="<?= site_url('administrator/register'); ?>" class="text-center"><?= cclang('register_a_new_membership'); ?></a>
-  
-    <br>
-    <br>
-    <p align="center"><b>-<?= cclang('or') ?>-</b></p>
-    <a href="<?= site_url('oauth/v/google'); ?>" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google"></i> <?= cclang('sign_in_using') ?> Google+</a>
+      <a href="<?= site_url('administrator/forgot-password'); ?>"><?= cclang('i_forgot_my_password'); ?></a><br>
+      <a href="<?= site_url('administrator/register'); ?>" class="text-center"><?= cclang('register_a_new_membership'); ?></a>
 
+      <br>
+      <br>
+      <p align="center"><b>-<?= cclang('or') ?>-</b></p>
+      <a href="<?= site_url('oauth/v/google'); ?>" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google"></i> <?= cclang('sign_in_using') ?> Google+</a>
+
+    </div>
+    <!-- /.login-box-body -->
   </div>
-  <!-- /.login-box-body -->
-</div>
-<!-- /.login-box -->
+  <!-- /.login-box -->
 
-<!-- jQuery 2.2.3 -->
-<script src="<?= BASE_ASSET; ?>/admin-lte/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<!-- Bootstrap 3.3.6 -->
-<script src="<?= BASE_ASSET; ?>/admin-lte/bootstrap/js/bootstrap.min.js"></script>
-<!-- iCheck -->
-<script src="<?= BASE_ASSET; ?>/admin-lte/plugins/iCheck/icheck.min.js"></script>
-<script>
-  $(function () {
-    $('input').iCheck({
-      checkboxClass: 'icheckbox_square-blue',
-      radioClass: 'iradio_square-blue',
-      increaseArea: '20%' // optional
+  <!-- jQuery 2.2.3 -->
+  <script src="<?= BASE_ASSET; ?>/admin-lte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+  <!-- Bootstrap 3.3.6 -->
+  <script src="<?= BASE_ASSET; ?>/admin-lte/bootstrap/js/bootstrap.min.js"></script>
+  <!-- iCheck -->
+  <script src="<?= BASE_ASSET; ?>/admin-lte/plugins/iCheck/icheck.min.js"></script>
+  <script>
+    $(function() {
+      $('input').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+      });
     });
-  });
-</script>
+  </script>
 </body>
+
 </html>
