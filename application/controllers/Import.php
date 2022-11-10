@@ -202,14 +202,14 @@ class Import extends MY_Controller
                 $insert_data_wali = $this->ImportModel->insert_Data_Wali($data_wali);
                 $insert_data_rombel = $this->ImportModel->insert_Data_rombel($data_rombel);
 
-                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"></span> Data Berhasil di Import ke Database' . $highestRow . $highestColumn);
+                $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database');
                 redirect($_SERVER['HTTP_REFERER']);
             } else {
-                $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"></span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+                $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
                 redirect($_SERVER['HTTP_REFERER']);
             }
         } else {
-            $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"></span> Terjadi kesalahan, file Tidak Valid');
+            $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
             redirect($_SERVER['HTTP_REFERER']);
         }
     }
