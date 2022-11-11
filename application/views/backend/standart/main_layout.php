@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/plugins/iCheck/all.css">
+  <!-- <link rel="stylesheet" href="<?= BASE_ASSET; ?>/admin-lte/plugins/datatables/jquery.dataTables.css"> -->
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/sweet-alert/sweetalert.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/toastr/build/toastr.css">
   <link rel="stylesheet" href="<?= BASE_ASSET; ?>/fancy-box/source/jquery.fancybox.css?v=2.1.5" media="screen" />
@@ -53,9 +54,14 @@
   <script src="<?= BASE_ASSET; ?>/editor/dist/js/medium-editor.js"></script>
   <script src="<?= BASE_ASSET; ?>js/cc-extension.js"></script>
   <script src="<?= BASE_ASSET; ?>/js/cc-page-element.js"></script>
-
+  <!-- <script src="<?= BASE_ASSET; ?>/admin-lte/plugins/datatables/jquery.dataTables.js"></script> -->
   <script src="<?= BASE_ASSET; ?>/stepper/jquery.steps.min.js"></script>
   <link href="<?= BASE_ASSET; ?>/stepper/css/jquery.steps.css" rel="stylesheet">
+  <!-- DATATABLES -->
+  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css"> -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+  <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
   <script>
     var BASE_URL = "<?= base_url(); ?>";
     var HTTP_REFERER = "<?= isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/'; ?>";

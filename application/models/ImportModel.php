@@ -4,13 +4,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class ImportModel extends CI_Model
 {
 
-    public function insert($data)
-    {
-        $insert = $this->db->insert_batch('tbl_data2', $data);
-        if ($insert) {
-            return true;
-        }
-    }
+
+    // public function insert($data)
+    // {
+    //     $insert = $this->db->insert_batch('tbl_data2', $data);
+    //     if ($insert) {
+    //         return true;
+    //     }
+    // }
 
     public function insert_PesertaDidik($data)
     {
@@ -52,9 +53,23 @@ class ImportModel extends CI_Model
         }
     }
 
+    public function insert_staff($data)
+    {
+        $insert_Data_staff = $this->db->on_duplicate('st_staff', $data);
+        if ($insert_Data_staff) {
+            return true;
+        }
+    }
+
     public function getData()
     {
         $this->db->select('*');
         return $this->db->get('pd_peserta_didik')->result_array();
+    }
+
+    public function getDataStaff()
+    {
+        $this->db->select('*');
+        return $this->db->get('st_staff')->result_array();
     }
 }

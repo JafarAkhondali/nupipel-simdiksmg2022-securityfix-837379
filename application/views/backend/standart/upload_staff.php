@@ -14,7 +14,7 @@
             <!-- AREA CHART -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Upload Data Peserta Didik</h3>
+                    <h3 class="box-title">Upload Data Staff Pengajar</h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -36,12 +36,13 @@
                             <div class="alert alert-info" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>
-                    <form action="<?= base_url('administrator/Import/import_pd'); ?>" method="post" enctype="multipart/form-data" name="form_upload_pd" id="form_upload_pd">
+                    <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
-                        <div class="form-group">
+
+                        <!-- <div class="form-group">
                             <label>Tahun ajaran</label>
-                            <select style="width:300px" class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran" required>
+                            <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran">
                                 <option value="">- Pilih Tahun -</option>
                                 <option value="2022">2022</option>
                                 <option value="2023">2023</option>
@@ -49,7 +50,7 @@
                                 <option value="2025">2025</option>
                                 <option value="2026">2026</option>
                             </select>
-                        </div>
+                        </div> -->
                         <div class="form-group">
                             <label>Pilih File Excel</label>
                             <input type="file" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
@@ -67,35 +68,30 @@
                     </form>
                 </div>
                 <hr>
+
                 <div class="box">
+                    <!-- <div class="box-header">
+                        <h3 class="box-title">Data Table With Full Features</h3>
+                    </div> -->
+
                     <div class="box-body">
-                        <table id="dataTablePd" class="table table-bordered table-striped">
+                        <table id="dataTableStaff" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>NISN</th>
                                     <th>Nama</th>
-                                    <th>NIPD</th>
-                                    <th>Jenis Kelamin</th>
-                                    <th>Tanggal Lahir</th>
-                                    <th>Tempat lahir</th>
-                                    <th>NIK</th>
-                                    <th>Agama</th>
-                                    <th>Alamat</th>
+                                    <th>NUPTK</th>
+                                    <th>NIP</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th>No</th>
-                                    <th>NISN</th>
-                                    <th>Nama</th>
-                                    <th>NIPD</th>
-                                    <th>Jenis Kelamin</th>
-                                    <th>Tanggal Lahir</th>
-                                    <th>Tempat lahir</th>
-                                    <th>NIK</th>
-                                    <th>Agama</th>
-                                    <th>Alamat</th>
+                                    <td>No</td>
+                                    <td>Nama</td>
+                                    <td>NUPTK</td>
+                                    <td>NIP</td>
+                                    <td>Status</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -103,32 +99,33 @@
                 </div>
             </div>
         </div>
+    </div>
 </section>
-
 
 <script>
     const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
         csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
     var idsekolah = $("#idsekolah").val();
-    // console.log(id);
+    console.log(idsekolah);
 
-    $('#dataTablePd').DataTable({
+    $('#dataTableStaff').DataTable({
         processing: true,
         serverSide: true,
         searchable: true,
         ajax: {
-            url: '<?= site_url() ?>administrator/import/dataTablePd',
+            url: '<?= site_url() ?>administrator/import/dataTableStaff',
             type: 'POST',
             data: {
                 id: idsekolah,
-                [csrfName]: csrfHash
+                [csrfName]: csrfHash,
             },
         },
     });
 </script>
 
+
 <script>
-    $("#form_upload_pd").on("submit", function() {
+    $("#form_upload_staff").on("submit", function() {
         $('.loading').show();
     });
 </script>
