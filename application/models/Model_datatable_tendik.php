@@ -1,14 +1,14 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Model_datatable_pd extends CI_Model
+class Model_datatable_tendik extends CI_Model
 {
     //set nama tabel yang akan kita tampilkan datanya
-    var $table = 'pd_peserta_didik';
+    var $table = 'st_staff';
     //set kolom order, kolom pertama saya null untuk kolom edit dan hapus
-    var $column_order = array(null, 'nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_order = array(null, 'nama', 'nuptk', 'nip');
 
-    var $column_search = array('nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_search = array('nama', 'nuptk', 'nip');
     // default order 
     var $order = array('nama' => 'asc');
 
@@ -16,9 +16,15 @@ class Model_datatable_pd extends CI_Model
     {
         parent::__construct();
         $this->load->database();
-        // $this->load->library('session');
     }
 
+    public function insert_tendik($data)
+    {
+        $insert_Data_tendik = $this->db->on_duplicate('st_staff', $data);
+        if ($insert_Data_tendik) {
+            return true;
+        }
+    }
 
     private function _get_datatables_query()
     {
@@ -26,6 +32,10 @@ class Model_datatable_pd extends CI_Model
 
         $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
+        $this->db->where('jenis', 'Tendik');
+
+        var_dump($result);
+        die;
 
         $i = 0;
 
@@ -56,14 +66,6 @@ class Model_datatable_pd extends CI_Model
         }
     }
 
-    function getDataPd()
-    {
-        $this->_get_datatables_query();
-        $query = $this->db->get();
-        return $query->result();
-    }
-
-
     function get_datatables()
     {
         $this->_get_datatables_query();
@@ -83,58 +85,26 @@ class Model_datatable_pd extends CI_Model
     public function count_all()
     {
         $kodesekolah = $this->input->post('id');
-
         $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
+        $this->db->where('jenis', 'Tendik');
 
         return $this->db->count_all_results();
     }
 
-    public function deletePD_by_id()
+    public function deleteTendik_by_id()
     {
         $kodesekolah = $this->input->post('id');
         // $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
-        return $this->db->delete(array('pd_peserta_didik', 'pd_detail_siswa', 'pd_data_wali', 'pd_orang_tua', 'pd_rombel'));
+        $this->db->where('jenis', 'Tendik');
+        return $this->db->delete('st_staff');
     }
 
-    public function insert_PesertaDidik($data)
+    function getDataTendik()
     {
-        $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik', $data);
-        if ($insert_PesertaDidik) {
-            return true;
-        }
-    }
-
-    public function insertDetail_PesertaDidik($data)
-    {
-        $insertDetail_PesertaDidik = $this->db->on_duplicate('pd_detail_siswa', $data);
-        if ($insertDetail_PesertaDidik) {
-            return true;
-        }
-    }
-
-    public function insert_Data_Orangtua($data)
-    {
-        $insert_Data_Orangtua = $this->db->on_duplicate('pd_orang_tua', $data);
-        if ($insert_Data_Orangtua) {
-            return true;
-        }
-    }
-
-    public function insert_Data_Wali($data)
-    {
-        $insert_Data_Wali = $this->db->on_duplicate('pd_data_wali', $data);
-        if ($insert_Data_Wali) {
-            return true;
-        }
-    }
-
-    public function insert_Data_rombel($data)
-    {
-        $insert_Data_rombel = $this->db->on_duplicate('pd_rombel', $data);
-        if ($insert_Data_rombel) {
-            return true;
-        }
+        $this->_get_datatables_query();
+        $query = $this->db->get();
+        return $query->result();
     }
 }

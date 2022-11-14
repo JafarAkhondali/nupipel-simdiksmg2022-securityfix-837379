@@ -18,12 +18,35 @@ class Model_datatable_staff extends CI_Model
         $this->load->database();
     }
 
+    public function getDataStaff()
+    {
+        $this->_get_datatables_query();
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function insert_staff($data)
+    {
+        $insert_Data_staff = $this->db->on_duplicate('st_staff', $data);
+        if ($insert_Data_staff) {
+            return true;
+        }
+    }
+
+
     private function _get_datatables_query()
     {
         $kodesekolah = $this->input->post('id');
+        $jenisPTK = $this->input->post('ptk');
 
         $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
+        if ($jenisPTK == 'Guru') {
+            $jenis = 'Guru';
+        } else {
+            $jenis = 'Tendik';
+        }
+        $this->db->where('jenis', $jenis);
 
         // var_dump($result);
         // die;
@@ -76,9 +99,32 @@ class Model_datatable_staff extends CI_Model
     public function count_all()
     {
         $kodesekolah = $this->input->post('id');
+        $jenisPTK = $this->input->post('ptk');
+
         $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
+        if ($jenisPTK == 'Guru') {
+            $jenis = 'Guru';
+        } else {
+            $jenis = 'Tendik';
+        }
+        $this->db->where('jenis', $jenis);
 
         return $this->db->count_all_results();
+    }
+
+    public function delete_by_id()
+    {
+        $kodesekolah = $this->input->post('id');
+        $jenisPTK = $this->input->post('ptk');
+        // $this->db->from($this->table);
+        $this->db->where('created_by', $kodesekolah);
+        if ($jenisPTK == 'Guru') {
+            $jenis = 'Guru';
+        } else {
+            $jenis = 'Tendik';
+        }
+        $this->db->where('jenis', $jenis);
+        return $this->db->delete('st_staff');
     }
 }

@@ -15,9 +15,11 @@ class Import extends Admin
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('ImportModel');
+		// $this->load->model('ImportModel');
 		$this->load->model('model_datatable_staff');
 		$this->load->model('model_datatable_pd');
+		$this->load->model('model_datatable_pdkeluar');
+		$this->load->model('model_datatable_pembelajaran');
 		$this->load->library(array('excel', 'session'));
 	}
 
@@ -41,30 +43,45 @@ class Import extends Admin
 		if (!$this->aauth->is_allowed('dashboard')) {
 			redirect('/', 'refresh');
 		}
-
-		$this->load->model('ImportModel');
-		$data2 = array(
-			'list_data'    => $this->ImportModel->getDataStaff()
-		);
-		$this->render('backend/standart/upload_staff', $data2);
+		// $this->load->model('Model_datatable_staff');
+		// $data2 = array(
+		// 	'list_data'    => $this->Model_datatable_staff->getDataStaff()
+		// );
+		$this->render('backend/standart/upload_staff');
 	}
 
-	public function datatable()
+	public function tendik()
 	{
 		if (!$this->aauth->is_allowed('dashboard')) {
 			redirect('/', 'refresh');
 		}
-		$this->render('backend/standart/user_view');
+
+		$this->render('backend/standart/upload_tendik');
 	}
+
+
+	public function pd_keluar()
+	{
+		if (!$this->aauth->is_allowed('dashboard')) {
+			redirect('/', 'refresh');
+		}
+		$this->render('backend/standart/upload_pd_keluar');
+	}
+
+	public function pembelajaran()
+	{
+		if (!$this->aauth->is_allowed('dashboard')) {
+			redirect('/', 'refresh');
+		}
+		$this->render('backend/standart/upload_pembelajaran');
+	}
+
 
 
 
 	function dataTableStaff()
 	{
-		// echo json_encode('tes');
-		// die;
-		// var_dump($this->input->post());
-		// die;
+
 		header('Content-Type: application/json');
 		$list = $this->model_datatable_staff->get_datatables();
 		$data = array();
@@ -85,6 +102,66 @@ class Import extends Admin
 			"draw" => $this->input->post('draw'),
 			"recordsTotal" => $this->model_datatable_staff->count_all(),
 			"recordsFiltered" => $this->model_datatable_staff->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+		// $this->output->set_output(json_encode($output));
+	}
+
+	function dataTableMatpel()
+	{
+
+		header('Content-Type: application/json');
+		$list = $this->model_datatable_pembelajaran->get_datatables();
+		$data = array();
+		$no = $this->input->post('start');
+
+		foreach ($list as $datas) {
+			$no++;
+			$row = array();
+
+			$row[] =  '<strong>' . $no . '</strong>';
+			$row[] = $datas->nama_ptk;
+			$row[] = $datas->nuptk;
+			$row[] = $datas->kepegawaian;
+			$row[] = $datas->nama_matpel;
+			$row[] = $datas->rombel;
+			$data[] = $row;
+		}
+		$output = array(
+			"draw" => $this->input->post('draw'),
+			"recordsTotal" => $this->model_datatable_pembelajaran->count_all(),
+			"recordsFiltered" => $this->model_datatable_pembelajaran->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+		// $this->output->set_output(json_encode($output));
+	}
+
+	function dataTablePdKeluar()
+	{
+
+		header('Content-Type: application/json');
+		$list = $this->model_datatable_pdkeluar->get_datatables();
+		$data = array();
+		$no = $this->input->post('start');
+
+		foreach ($list as $datas) {
+			$no++;
+			$row = array();
+
+			$row[] =  '<strong>' . $no . '</strong>';
+			$row[] = $datas->nisn;
+			$row[] = $datas->keluar_karena;
+			$row[] = $datas->tanggal_keluar;
+			$data[] = $row;
+		}
+		$output = array(
+			"draw" => $this->input->post('draw'),
+			"recordsTotal" => $this->model_datatable_pdkeluar->count_all(),
+			"recordsFiltered" => $this->model_datatable_pdkeluar->count_filtered(),
 			"data" => $data,
 		);
 		//output to json format
@@ -129,6 +206,69 @@ class Import extends Admin
 		echo json_encode($output);
 		// $this->output->set_output(json_encode($output));
 	}
+
+	function deleteDataStaff()
+	{
+		$this->model_datatable_staff->delete_by_id();
+		echo json_encode("del");
+
+		// if ($delete) {
+		// 	echo json_encode("del");
+		// 	// $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil dihapus');
+		// 	redirect($_SERVER['HTTP_REFERER']);
+		// } else {
+		// 	echo json_encode("err");
+		// 	// $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-ok"> </span> Error, gagal menghapus data');
+		// 	redirect($_SERVER['HTTP_REFERER']);
+		// }
+	}
+
+	function deleteDataPD()
+	{
+		$this->model_datatable_pd->deletePD_by_id();
+		echo json_encode("del");
+	}
+
+	// function deleteDataTendik()
+	// {
+	// 	$this->model_datatable_tendik->deleteTendik_by_id();
+	// 	echo json_encode("del");
+	// }
+
+	function cekDatatableStaff()
+	{
+		$jumlahdata = $this->model_datatable_staff->count_all();
+		echo json_encode($jumlahdata);
+	}
+
+	function cekDatatableMatpel()
+	{
+		$jumlahdata = $this->model_datatable_pembelajaran->count_all();
+		echo json_encode($jumlahdata);
+	}
+
+	// function cekDatatableTendik()
+	// {
+	// 	$jumlahdata = $this->model_datatable_tendik->count_all();
+	// 	echo json_encode($jumlahdata);
+	// }
+
+	function cekDatatablePd()
+	{
+		$jumlahdata = $this->model_datatable_pd->count_all();
+		echo json_encode($jumlahdata);
+	}
+
+	function cekDatatablePdKeluar()
+	{
+		$jumlahdata = $this->model_datatable_pdkeluar->count_all();
+		echo json_encode($jumlahdata);
+	}
+
+
+
+
+
 
 	public function import_pd()
 	{
@@ -311,12 +451,12 @@ class Import extends Admin
 			}
 
 			if ($highestColumn == 'BN') {
-				$this->load->model('ImportModel');
-				$insert_pesertadidik = $this->ImportModel->insert_PesertaDidik($data_pesertadidik);
-				$insert_detail_pesertadidik = $this->ImportModel->insertDetail_PesertaDidik($data_pesertadidik_detail);
-				$insert_data_orangtua = $this->ImportModel->insert_Data_Orangtua($data_orangtua);
-				$insert_data_wali = $this->ImportModel->insert_Data_Wali($data_wali);
-				$insert_data_rombel = $this->ImportModel->insert_Data_rombel($data_rombel);
+				$this->load->model('Model_datatable_pd');
+				$insert_pesertadidik = $this->Model_datatable_pd->insert_PesertaDidik($data_pesertadidik);
+				$insert_detail_pesertadidik = $this->Model_datatable_pd->insertDetail_PesertaDidik($data_pesertadidik_detail);
+				$insert_data_orangtua = $this->Model_datatable_pd->insert_Data_Orangtua($data_orangtua);
+				$insert_data_wali = $this->Model_datatable_pd->insert_Data_Wali($data_wali);
+				$insert_data_rombel = $this->Model_datatable_pd->insert_Data_rombel($data_rombel);
 
 				$rowtrim = 6;
 				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
@@ -339,7 +479,7 @@ class Import extends Admin
 		// $extension = end($temp);
 		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
-		// $tahun = $this->input->post('tahun_ajaran');
+		$jenisPTK = $this->input->post('jenis_ptk');
 
 		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
 
@@ -400,6 +540,12 @@ class Import extends Admin
 					$bujur = $worksheet->getCellByColumnAndRow(49, $row)->getValue();
 					$nuks = $worksheet->getCellByColumnAndRow(51, $row)->getValue();
 
+					if ($jenisPTK == 'Guru') {
+						$jenis = 'Guru';
+					} else {
+						$jenis = 'Tendik';
+					}
+
 					$data_staff[] = array(
 						'nama'    => $nama,
 						'nuptk'    => $nuptk,
@@ -451,7 +597,7 @@ class Import extends Admin
 						'lintang'    => $lintang,
 						'bujur'    => $bujur,
 						'nuks'    => $nuks,
-						'jenis'    => 'Guru',
+						'jenis'    => $jenis,
 						'created_by'    => $this->session->userdata('username')
 					);
 				}
@@ -459,8 +605,56 @@ class Import extends Admin
 
 			if ($highestColumn == 'AZ') {
 				$rowtrim = 5;
-				$this->load->model('ImportModel');
-				$insert_staff = $this->ImportModel->insert_staff($data_staff);
+				$this->load->model('Model_datatable_staff');
+				$insert_staff = $this->Model_datatable_staff->insert_staff($data_staff);
+
+				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+				redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		} else {
+			$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+
+	public function import_pdkeluar()
+	{
+		$config['allowed_types']    = 'xls|xlsx';
+		$this->load->library('upload', $config);
+		$temp = explode(".", $_FILES["file"]["name"]);
+		// $extension = end($temp);
+		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
+		// $jenisPTK = $this->input->post('jenis_ptk');
+
+		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+
+			$path = $_FILES["fileExcel"]["tmp_name"];
+			$object = PHPExcel_IOFactory::load($path);
+			foreach ($object->getWorksheetIterator() as $worksheet) {
+				$highestRow = $worksheet->getHighestRow();
+				$highestColumn = $worksheet->getHighestColumn();
+				for ($row = 9; $row <= $highestRow; $row++) {
+					$nisn = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+					$keluar = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
+					$tanggal = $worksheet->getCellByColumnAndRow(42, $row)->getValue();
+
+					$data_pdkeluar[] = array(
+						'nisn'    => $nisn,
+						'keluar_karena'    => $keluar,
+						'tanggal_keluar'    => $tanggal,
+						'created_by'    => $this->session->userdata('username')
+					);
+				}
+			}
+
+			if ($highestColumn == 'AQ') {
+				$rowtrim = 8;
+				$this->load->model('Model_datatable_pdkeluar');
+				$insert_pdkeluar = $this->Model_datatable_pdkeluar->insert_PesertaDidikKeluar($data_pdkeluar);
 
 				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
 				redirect($_SERVER['HTTP_REFERER']);

@@ -1,16 +1,16 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Model_datatable_pd extends CI_Model
+class Model_datatable_pdkeluar extends CI_Model
 {
     //set nama tabel yang akan kita tampilkan datanya
-    var $table = 'pd_peserta_didik';
+    var $table = 'pd_peserta_didik_keluar';
     //set kolom order, kolom pertama saya null untuk kolom edit dan hapus
-    var $column_order = array(null, 'nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_order = array(null, 'nisn', 'keluar_karena', 'tanggal_keluar');
 
-    var $column_search = array('nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_search = array('nisn', 'keluar_karena', 'tanggal_keluar');
     // default order 
-    var $order = array('nama' => 'asc');
+    var $order = array('tanggal_keluar' => 'desc');
 
     public function __construct()
     {
@@ -90,50 +90,18 @@ class Model_datatable_pd extends CI_Model
         return $this->db->count_all_results();
     }
 
-    public function deletePD_by_id()
+    public function deleteSO_by_id()
     {
         $kodesekolah = $this->input->post('id');
         // $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
-        return $this->db->delete(array('pd_peserta_didik', 'pd_detail_siswa', 'pd_data_wali', 'pd_orang_tua', 'pd_rombel'));
+        return $this->db->delete('pd_peserta_didik_keluar');
     }
 
-    public function insert_PesertaDidik($data)
+    public function insert_PesertaDidikKeluar($data)
     {
-        $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik', $data);
+        $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik_keluar', $data);
         if ($insert_PesertaDidik) {
-            return true;
-        }
-    }
-
-    public function insertDetail_PesertaDidik($data)
-    {
-        $insertDetail_PesertaDidik = $this->db->on_duplicate('pd_detail_siswa', $data);
-        if ($insertDetail_PesertaDidik) {
-            return true;
-        }
-    }
-
-    public function insert_Data_Orangtua($data)
-    {
-        $insert_Data_Orangtua = $this->db->on_duplicate('pd_orang_tua', $data);
-        if ($insert_Data_Orangtua) {
-            return true;
-        }
-    }
-
-    public function insert_Data_Wali($data)
-    {
-        $insert_Data_Wali = $this->db->on_duplicate('pd_data_wali', $data);
-        if ($insert_Data_Wali) {
-            return true;
-        }
-    }
-
-    public function insert_Data_rombel($data)
-    {
-        $insert_Data_rombel = $this->db->on_duplicate('pd_rombel', $data);
-        if ($insert_Data_rombel) {
             return true;
         }
     }

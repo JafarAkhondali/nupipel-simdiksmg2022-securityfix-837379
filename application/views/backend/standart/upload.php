@@ -14,7 +14,7 @@
             <!-- AREA CHART -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Upload Data Peserta Didik</h3>
+                    <h3 class="box-title"><b>Upload Data Siswa/ Peserta Didik</b></h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -55,13 +55,18 @@
                             <input type="file" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                         </div>
                         <div>
-                            <button class='btn btn-success' type="submit">
+                            <button id='import' name='import' class='btn btn-success' type="submit">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Import
                             </button>&nbsp;&nbsp;
+                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deletePD()">
+                                <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;
+                                Hapus Data
+                            </button>
+                            &nbsp;&nbsp;
                             <span class="loading loading-hide">
                                 <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
-                                <i><?= 'Harap Tunggu sedang proses upload data'; ?></i>
+                                <i><?= 'Harap Tunggu sedang proses'; ?></i>
                             </span>
                         </div>
                     </form>
@@ -125,6 +130,70 @@
             },
         },
     });
+
+    $.ajax({
+        url: "<?= site_url() ?>administrator/import/cekDatatablePd",
+        type: "POST",
+        data: {
+            id: idsekolah,
+            [csrfName]: csrfHash,
+        }
+    }).done(function(res) {
+        var jumlahData = res;
+        if (jumlahData == 0) {
+            //alert();
+            document.getElementById('hapus').disabled = true;
+        } else {
+            document.getElementById('hapus').disabled = false;
+        }
+        // console.log(res);
+    });
+</script>
+
+<script>
+    function deletePD() {
+        const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
+            csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
+        var idsekolah = $("#idsekolah").val();
+        console.log(idsekolah);
+        swal({
+                title: "<?= cclang('are_you_sure'); ?>",
+                text: "Proses ini akan menghapus seluruh data yang telah anda import/ upload. Silakan upload ulang data anda apabila ada perbaikan",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#D30000",
+                confirmButtonText: "Hapus",
+                cancelButtonText: "Batal",
+                closeOnConfirm: true,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: '<?= base_url('administrator/import/deleteDataPD') ?>',
+                        data: {
+                            id: idsekolah,
+                            [csrfName]: csrfHash,
+                        },
+                        beforeSend: function() {
+                            $('.loading').show();
+                        },
+                    }).success(function(res) {
+                        var data = res;
+                        if (data = 'del') {
+                            $('.loading').hide();
+                            location.reload();
+                        }
+                        // console.log(data);
+                        // alert();
+                    });
+                } else {
+                    location.reload();
+                }
+            });
+    }
 </script>
 
 <script>

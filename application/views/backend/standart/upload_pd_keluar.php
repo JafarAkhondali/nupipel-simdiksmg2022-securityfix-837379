@@ -14,7 +14,7 @@
             <!-- AREA CHART -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><b>Upload Data Guru Pengajar (PNS / Non PNS)</b></h3>
+                    <h3 class="box-title"><b>Upload Data Siswa Keluar</b></h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -36,22 +36,9 @@
                             <div class="alert alert-info" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>
-                    <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
+                    <form action="<?= base_url('administrator/Import/import_pdkeluar'); ?>" method="post" enctype="multipart/form-data" name="form_upload_pd" id="form_upload_pd">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
-                        <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly>
-
-                        <!-- <div class="form-group">
-                            <label>Tahun ajaran</label>
-                            <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran">
-                                <option value="">- Pilih Tahun -</option>
-                                <option value="2022">2022</option>
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                            </select>
-                        </div> -->
                         <div class="form-group">
                             <label>Pilih File Excel</label>
                             <input type="file" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
@@ -61,7 +48,7 @@
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Import
                             </button>&nbsp;&nbsp;
-                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deleteStaff()">
+                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deletePD()">
                                 <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;
                                 Hapus Data
                             </button>
@@ -74,70 +61,60 @@
                     </form>
                 </div>
                 <hr>
-
                 <div class="box">
                     <div class="box-body">
-                        <table id="dataTableStaff" class="table table-bordered table-striped">
+                        <table id="dataTableSiswaOut" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>NUPTK</th>
-                                    <th>NIP</th>
-                                    <th>Status</th>
+                                    <th>NISN</th>
+                                    <th>Alasan Keluar</th>
+                                    <th>Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>No</td>
-                                    <td>Nama</td>
-                                    <td>NUPTK</td>
-                                    <td>NIP</td>
-                                    <td>Status</td>
+                                    <th>NISN</th>
+                                    <th>Alasan Keluar</th>
+                                    <th>Tanggal</th>
                                 </tr>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </section>
+
 
 <script>
     const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
         csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
     var idsekolah = $("#idsekolah").val();
-    var jenisptk = $("#jenis_ptk").val();
-    // console.log(jenisptk);
+    // console.log(id);
 
-    $('#dataTableStaff').DataTable({
+    $('#dataTableSiswaOut').DataTable({
         processing: true,
         serverSide: true,
-        // searchable: true,
+        searchable: true,
         ajax: {
-            url: '<?= site_url() ?>administrator/import/dataTableStaff',
+            url: '<?= site_url() ?>administrator/import/dataTablePdKeluar',
             type: 'POST',
             data: {
                 id: idsekolah,
-                ptk: jenisptk,
-                [csrfName]: csrfHash,
+                [csrfName]: csrfHash
             },
-        }
+        },
     });
 
     $.ajax({
-        url: "<?= site_url() ?>administrator/import/cekDatatableStaff",
+        url: "<?= site_url() ?>administrator/import/cekDatatablePdKeluar",
         type: "POST",
         data: {
             id: idsekolah,
-            ptk: jenisptk,
             [csrfName]: csrfHash,
         }
     }).done(function(res) {
         var jumlahData = res;
-        // console.log(jumlahData);
         if (jumlahData == 0) {
             //alert();
             document.getElementById('hapus').disabled = true;
@@ -149,12 +126,11 @@
 </script>
 
 <script>
-    function deleteStaff() {
+    function deletePD() {
         const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
             csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
         var idsekolah = $("#idsekolah").val();
-        var jenisptk = $("#jenis_ptk").val();
-        console.log(jenisptk);
+        console.log(idsekolah);
         swal({
                 title: "<?= cclang('are_you_sure'); ?>",
                 text: "Proses ini akan menghapus seluruh data yang telah anda import/ upload. Silakan upload ulang data anda apabila ada perbaikan",
@@ -171,19 +147,22 @@
                     $.ajax({
                         dataType: 'json',
                         type: 'POST',
-                        url: '<?= base_url('administrator/import/deleteDataStaff') ?>',
+                        url: '<?= base_url('administrator/import/deleteDataPdKeluar') ?>',
                         data: {
                             id: idsekolah,
-                            ptk: jenisptk,
                             [csrfName]: csrfHash,
                         },
                         beforeSend: function() {
                             $('.loading').show();
                         },
-                    }).done(function() {
-                        $('.loading').hide();
-                        location.reload();
-
+                    }).success(function(res) {
+                        var data = res;
+                        if (data = 'del') {
+                            $('.loading').hide();
+                            location.reload();
+                        }
+                        // console.log(data);
+                        // alert();
                     });
                 } else {
                     location.reload();
@@ -192,9 +171,8 @@
     }
 </script>
 
-
 <script>
-    $("#form_upload_staff").on("submit", function() {
+    $("#form_upload_pd").on("submit", function() {
         $('.loading').show();
     });
 </script>

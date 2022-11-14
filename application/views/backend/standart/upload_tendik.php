@@ -14,7 +14,7 @@
             <!-- AREA CHART -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><b>Upload Data Guru Pengajar (PNS / Non PNS)</b></h3>
+                    <h3 class="box-title"><b>Upload Data Tenaga Pendidik (Non Guru)</b></h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -39,7 +39,7 @@
                     <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
-                        <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly>
+                        <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Tendik" readonly>
 
                         <!-- <div class="form-group">
                             <label>Tahun ajaran</label>
@@ -110,7 +110,7 @@
         csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
     var idsekolah = $("#idsekolah").val();
     var jenisptk = $("#jenis_ptk").val();
-    // console.log(jenisptk);
+    console.log(jenisptk);
 
     $('#dataTableStaff').DataTable({
         processing: true,
@@ -137,7 +137,7 @@
         }
     }).done(function(res) {
         var jumlahData = res;
-        // console.log(jumlahData);
+        console.log(jumlahData);
         if (jumlahData == 0) {
             //alert();
             document.getElementById('hapus').disabled = true;

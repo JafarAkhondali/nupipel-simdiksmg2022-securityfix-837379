@@ -14,7 +14,7 @@
             <!-- AREA CHART -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><b>Upload Data Guru Pengajar (PNS / Non PNS)</b></h3>
+                    <h3 class="box-title"><b>Upload Data Pembelajaran & Rombel</b></h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -81,10 +81,11 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama</th>
+                                    <th>Nama PTK</th>
                                     <th>NUPTK</th>
-                                    <th>NIP</th>
-                                    <th>Status</th>
+                                    <th>Kepegawaian</th>
+                                    <th>Mapel</th>
+                                    <th>Rombel</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,7 +110,6 @@
     const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
         csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
     var idsekolah = $("#idsekolah").val();
-    var jenisptk = $("#jenis_ptk").val();
     // console.log(jenisptk);
 
     $('#dataTableStaff').DataTable({
@@ -117,22 +117,20 @@
         serverSide: true,
         // searchable: true,
         ajax: {
-            url: '<?= site_url() ?>administrator/import/dataTableStaff',
+            url: '<?= site_url() ?>administrator/import/dataTableMatpel',
             type: 'POST',
             data: {
                 id: idsekolah,
-                ptk: jenisptk,
                 [csrfName]: csrfHash,
             },
         }
     });
 
     $.ajax({
-        url: "<?= site_url() ?>administrator/import/cekDatatableStaff",
+        url: "<?= site_url() ?>administrator/import/cekDatatableMatpel",
         type: "POST",
         data: {
             id: idsekolah,
-            ptk: jenisptk,
             [csrfName]: csrfHash,
         }
     }).done(function(res) {
