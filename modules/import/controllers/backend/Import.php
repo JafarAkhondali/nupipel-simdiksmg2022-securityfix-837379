@@ -34,7 +34,6 @@ class Import extends Admin
 			'list_data'    => $this->ImportModel->getData()
 		);
 
-		// $data = [];
 		$this->render('backend/standart/upload', $data);
 	}
 
@@ -210,26 +209,26 @@ class Import extends Admin
 	function deleteDataStaff()
 	{
 		$this->model_datatable_staff->delete_by_id();
-		echo json_encode("del");
+		return json_encode("del");
 	}
 
 	function deleteDataMatpel()
 	{
 		$this->model_datatable_pembelajaran->deleteMatpel_by_id();
-		echo json_encode("del");
+		return json_encode("del");
 	}
 
 	function deleteDataPD()
 	{
 		$this->model_datatable_pd->deletePD_by_id();
-		echo json_encode("del");
+		return  json_encode("del");
 	}
 
-	// function deleteDataTendik()
-	// {
-	// 	$this->model_datatable_tendik->deleteTendik_by_id();
-	// 	echo json_encode("del");
-	// }
+	function deleteDataPdKeluar()
+	{
+		$this->model_datatable_pdkeluar->deletePdKeluar_by_id();
+		return  json_encode("del");
+	}
 
 	function cekDatatableStaff()
 	{
@@ -243,12 +242,6 @@ class Import extends Admin
 		echo json_encode($jumlahdata);
 	}
 
-	// function cekDatatableTendik()
-	// {
-	// 	$jumlahdata = $this->model_datatable_tendik->count_all();
-	// 	echo json_encode($jumlahdata);
-	// }
-
 	function cekDatatablePd()
 	{
 		$jumlahdata = $this->model_datatable_pd->count_all();
@@ -260,11 +253,6 @@ class Import extends Admin
 		$jumlahdata = $this->model_datatable_pdkeluar->count_all();
 		echo json_encode($jumlahdata);
 	}
-
-
-
-
-
 
 	public function import_pd()
 	{
@@ -477,141 +465,147 @@ class Import extends Admin
 
 		$jenisPTK = $this->input->post('jenis_ptk');
 
-		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+		if (isset($_FILES["fileExcel"]["name"])) {
 
-			$path = $_FILES["fileExcel"]["tmp_name"];
-			$object = PHPExcel_IOFactory::load($path);
-			foreach ($object->getWorksheetIterator() as $worksheet) {
-				$highestRow = $worksheet->getHighestRow();
-				$highestColumn = $worksheet->getHighestColumn();
-				for ($row = 6; $row <= $highestRow; $row++) {
-					$nama = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$nuptk = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$jk = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$tempat_lahir = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$tanggal_lahir = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$nip = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
-					$status_pegawai = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$jenis_ptk = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
-					$agama = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
-					$alamat = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
-					$rt = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
-					$rw = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
-					$dusun = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
-					$kelurahan = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
-					$kecamatan = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
-					$kodepos = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
-					$telepon = $worksheet->getCellByColumnAndRow(17, $row)->getValue();
-					$hp = $worksheet->getCellByColumnAndRow(18, $row)->getValue();
-					$email = $worksheet->getCellByColumnAndRow(19, $row)->getValue();
-					$tugas_tambahan = $worksheet->getCellByColumnAndRow(20, $row)->getValue();
-					$sk_cpns = $worksheet->getCellByColumnAndRow(21, $row)->getValue();
-					$tgl_cpns = $worksheet->getCellByColumnAndRow(22, $row)->getValue();
-					$sk_pengangkatan = $worksheet->getCellByColumnAndRow(23, $row)->getValue();
-					$tmt_pengangkatan = $worksheet->getCellByColumnAndRow(24, $row)->getValue();
-					$lembaga_pengangkatan = $worksheet->getCellByColumnAndRow(25, $row)->getValue();
-					$pangkat_golongan = $worksheet->getCellByColumnAndRow(26, $row)->getValue();
-					$sumber_gaji = $worksheet->getCellByColumnAndRow(27, $row)->getValue();
-					$ibu_kandung = $worksheet->getCellByColumnAndRow(28, $row)->getValue();
-					$status_kawin = $worksheet->getCellByColumnAndRow(29, $row)->getValue();
-					$nama_suami_istri = $worksheet->getCellByColumnAndRow(30, $row)->getValue();
-					$nip_suami_istri = $worksheet->getCellByColumnAndRow(31, $row)->getValue();
-					$pekerjaan_suami_istri = $worksheet->getCellByColumnAndRow(32, $row)->getValue();
-					$tmt_pns = $worksheet->getCellByColumnAndRow(33, $row)->getValue();
-					$lisensi_kepsek = $worksheet->getCellByColumnAndRow(34, $row)->getValue();
-					$diklat_pengawas = $worksheet->getCellByColumnAndRow(35, $row)->getValue();
-					$ahli_braille = $worksheet->getCellByColumnAndRow(36, $row)->getValue();
-					$ahli_bahasa_isyarat = $worksheet->getCellByColumnAndRow(37, $row)->getValue();
-					$npwp = $worksheet->getCellByColumnAndRow(38, $row)->getValue();
-					$nama_wp = $worksheet->getCellByColumnAndRow(39, $row)->getValue();
-					$kewarganegaraan = $worksheet->getCellByColumnAndRow(40, $row)->getValue();
-					$bank = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
-					$nomor_rekening_bank = $worksheet->getCellByColumnAndRow(42, $row)->getValue();
-					$rekening_atas_nama = $worksheet->getCellByColumnAndRow(43, $row)->getValue();
-					$nik = $worksheet->getCellByColumnAndRow(44, $row)->getValue();
-					$no_kk = $worksheet->getCellByColumnAndRow(45, $row)->getValue();
-					$karpeg = $worksheet->getCellByColumnAndRow(46, $row)->getValue();
-					$karis_karsu = $worksheet->getCellByColumnAndRow(47, $row)->getValue();
-					$lintang = $worksheet->getCellByColumnAndRow(48, $row)->getValue();
-					$bujur = $worksheet->getCellByColumnAndRow(49, $row)->getValue();
-					$nuks = $worksheet->getCellByColumnAndRow(51, $row)->getValue();
 
-					if ($jenisPTK == 'Guru') {
-						$jenis = 'Guru';
-					} else {
-						$jenis = 'Tendik';
+			if (in_array($_FILES["fileExcel"]["type"], $mimes)) {
+
+				$path = $_FILES["fileExcel"]["tmp_name"];
+				$object = PHPExcel_IOFactory::load($path);
+				foreach ($object->getWorksheetIterator() as $worksheet) {
+					$highestRow = $worksheet->getHighestRow();
+					$highestColumn = $worksheet->getHighestColumn();
+					for ($row = 6; $row <= $highestRow; $row++) {
+						$nama = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+						$nuptk = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+						$jk = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+						$tempat_lahir = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+						$tanggal_lahir = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+						$nip = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+						$status_pegawai = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+						$jenis_ptk = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+						$agama = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+						$alamat = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+						$rt = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+						$rw = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+						$dusun = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
+						$kelurahan = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
+						$kecamatan = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
+						$kodepos = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
+						$telepon = $worksheet->getCellByColumnAndRow(17, $row)->getValue();
+						$hp = $worksheet->getCellByColumnAndRow(18, $row)->getValue();
+						$email = $worksheet->getCellByColumnAndRow(19, $row)->getValue();
+						$tugas_tambahan = $worksheet->getCellByColumnAndRow(20, $row)->getValue();
+						$sk_cpns = $worksheet->getCellByColumnAndRow(21, $row)->getValue();
+						$tgl_cpns = $worksheet->getCellByColumnAndRow(22, $row)->getValue();
+						$sk_pengangkatan = $worksheet->getCellByColumnAndRow(23, $row)->getValue();
+						$tmt_pengangkatan = $worksheet->getCellByColumnAndRow(24, $row)->getValue();
+						$lembaga_pengangkatan = $worksheet->getCellByColumnAndRow(25, $row)->getValue();
+						$pangkat_golongan = $worksheet->getCellByColumnAndRow(26, $row)->getValue();
+						$sumber_gaji = $worksheet->getCellByColumnAndRow(27, $row)->getValue();
+						$ibu_kandung = $worksheet->getCellByColumnAndRow(28, $row)->getValue();
+						$status_kawin = $worksheet->getCellByColumnAndRow(29, $row)->getValue();
+						$nama_suami_istri = $worksheet->getCellByColumnAndRow(30, $row)->getValue();
+						$nip_suami_istri = $worksheet->getCellByColumnAndRow(31, $row)->getValue();
+						$pekerjaan_suami_istri = $worksheet->getCellByColumnAndRow(32, $row)->getValue();
+						$tmt_pns = $worksheet->getCellByColumnAndRow(33, $row)->getValue();
+						$lisensi_kepsek = $worksheet->getCellByColumnAndRow(34, $row)->getValue();
+						$diklat_pengawas = $worksheet->getCellByColumnAndRow(35, $row)->getValue();
+						$ahli_braille = $worksheet->getCellByColumnAndRow(36, $row)->getValue();
+						$ahli_bahasa_isyarat = $worksheet->getCellByColumnAndRow(37, $row)->getValue();
+						$npwp = $worksheet->getCellByColumnAndRow(38, $row)->getValue();
+						$nama_wp = $worksheet->getCellByColumnAndRow(39, $row)->getValue();
+						$kewarganegaraan = $worksheet->getCellByColumnAndRow(40, $row)->getValue();
+						$bank = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
+						$nomor_rekening_bank = $worksheet->getCellByColumnAndRow(42, $row)->getValue();
+						$rekening_atas_nama = $worksheet->getCellByColumnAndRow(43, $row)->getValue();
+						$nik = $worksheet->getCellByColumnAndRow(44, $row)->getValue();
+						$no_kk = $worksheet->getCellByColumnAndRow(45, $row)->getValue();
+						$karpeg = $worksheet->getCellByColumnAndRow(46, $row)->getValue();
+						$karis_karsu = $worksheet->getCellByColumnAndRow(47, $row)->getValue();
+						$lintang = $worksheet->getCellByColumnAndRow(48, $row)->getValue();
+						$bujur = $worksheet->getCellByColumnAndRow(49, $row)->getValue();
+						$nuks = $worksheet->getCellByColumnAndRow(51, $row)->getValue();
+
+						if ($jenisPTK == 'Guru') {
+							$jenis = 'Guru';
+						} else {
+							$jenis = 'Tendik';
+						}
+
+						$data_staff[] = array(
+							'nama'    => $nama,
+							'nuptk'    => $nuptk,
+							'jk'    => $jk,
+							'tempat_lahir'    => $tempat_lahir,
+							'tanggal_lahir'    => $tanggal_lahir,
+							'nip'    => $nip,
+							'status_kepegawaian'    => $status_pegawai,
+							'jenis_ptk'    => $jenis_ptk,
+							'agama'    => $agama,
+							'alamat_jalan'    => $alamat,
+							'rt'    => $rt,
+							'rw'    => $rw,
+							'nama_dusun'    => $dusun,
+							'kelurahan'    => $kelurahan,
+							'kecamatan'    => $kecamatan,
+							'kode_pos'    => $kodepos,
+							'telepon'    => $telepon,
+							'hp'    => $hp,
+							'email'    => $email,
+							'tugas_tambahan'    => $tugas_tambahan,
+							'sk_cpns'    => $sk_cpns,
+							'tanggal_cpns'    => $tgl_cpns,
+							'sk_pengangkatan'    => $sk_pengangkatan,
+							'tmt_pengangkatan'    => $tmt_pengangkatan,
+							'lembaga_pengangkatan'    => $lembaga_pengangkatan,
+							'pangkat_golongan'    => $pangkat_golongan,
+							'sumber_gaji'    => $sumber_gaji,
+							'nama_ibu_kandung'    => $ibu_kandung,
+							'status_perkawinan'    => $status_kawin,
+							'nama_suami_istri'    => $nama_suami_istri,
+							'nip_suami_istri'    => $nip_suami_istri,
+							'pekerjaan_suami_istri'    => $pekerjaan_suami_istri,
+							'tmt_pns'    => $tmt_pns,
+							'sudah_lisensi_kepala_sekolah'    => $lisensi_kepsek,
+							'pernah_diklat_kepegawaian'    => $diklat_pengawas,
+							'keahlian_braille'    => $ahli_braille,
+							'keahlian_bahasa_isyarat'    => $ahli_bahasa_isyarat,
+							'npwp'    => $npwp,
+							'nama_wajib_pajak'    => $nama_wp,
+							'kewarganegaraan'    => $kewarganegaraan,
+							'bank'    => $bank,
+							'nomor_rekening_bank'    => $nomor_rekening_bank,
+							'rekening_atas_nama'    => $rekening_atas_nama,
+							'nik'    => $nik,
+							'no_kk'    => $no_kk,
+							'karpeg'    => $karpeg,
+							'karis_karsu'    => $karis_karsu,
+							'lintang'    => $lintang,
+							'bujur'    => $bujur,
+							'nuks'    => $nuks,
+							'jenis'    => $jenis,
+							'created_by'    => $this->session->userdata('username')
+						);
 					}
-
-					$data_staff[] = array(
-						'nama'    => $nama,
-						'nuptk'    => $nuptk,
-						'jk'    => $jk,
-						'tempat_lahir'    => $tempat_lahir,
-						'tanggal_lahir'    => $tanggal_lahir,
-						'nip'    => $nip,
-						'status_kepegawaian'    => $status_pegawai,
-						'jenis_ptk'    => $jenis_ptk,
-						'agama'    => $agama,
-						'alamat_jalan'    => $alamat,
-						'rt'    => $rt,
-						'rw'    => $rw,
-						'nama_dusun'    => $dusun,
-						'kelurahan'    => $kelurahan,
-						'kecamatan'    => $kecamatan,
-						'kode_pos'    => $kodepos,
-						'telepon'    => $telepon,
-						'hp'    => $hp,
-						'email'    => $email,
-						'tugas_tambahan'    => $tugas_tambahan,
-						'sk_cpns'    => $sk_cpns,
-						'tanggal_cpns'    => $tgl_cpns,
-						'sk_pengangkatan'    => $sk_pengangkatan,
-						'tmt_pengangkatan'    => $tmt_pengangkatan,
-						'lembaga_pengangkatan'    => $lembaga_pengangkatan,
-						'pangkat_golongan'    => $pangkat_golongan,
-						'sumber_gaji'    => $sumber_gaji,
-						'nama_ibu_kandung'    => $ibu_kandung,
-						'status_perkawinan'    => $status_kawin,
-						'nama_suami_istri'    => $nama_suami_istri,
-						'nip_suami_istri'    => $nip_suami_istri,
-						'pekerjaan_suami_istri'    => $pekerjaan_suami_istri,
-						'tmt_pns'    => $tmt_pns,
-						'sudah_lisensi_kepala_sekolah'    => $lisensi_kepsek,
-						'pernah_diklat_kepegawaian'    => $diklat_pengawas,
-						'keahlian_braille'    => $ahli_braille,
-						'keahlian_bahasa_isyarat'    => $ahli_bahasa_isyarat,
-						'npwp'    => $npwp,
-						'nama_wajib_pajak'    => $nama_wp,
-						'kewarganegaraan'    => $kewarganegaraan,
-						'bank'    => $bank,
-						'nomor_rekening_bank'    => $nomor_rekening_bank,
-						'rekening_atas_nama'    => $rekening_atas_nama,
-						'nik'    => $nik,
-						'no_kk'    => $no_kk,
-						'karpeg'    => $karpeg,
-						'karis_karsu'    => $karis_karsu,
-						'lintang'    => $lintang,
-						'bujur'    => $bujur,
-						'nuks'    => $nuks,
-						'jenis'    => $jenis,
-						'created_by'    => $this->session->userdata('username')
-					);
 				}
-			}
 
-			if ($highestColumn == 'AZ') {
-				$rowtrim = 5;
-				$this->load->model('Model_datatable_staff');
-				$insert_staff = $this->Model_datatable_staff->insert_staff($data_staff);
+				if ($highestColumn == 'AZ') {
+					$rowtrim = 5;
+					$this->load->model('Model_datatable_staff');
+					$insert_staff = $this->Model_datatable_staff->insert_staff($data_staff);
 
-				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
-				redirect($_SERVER['HTTP_REFERER']);
+					$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+					redirect($_SERVER['HTTP_REFERER']);
+				} else {
+					$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+					redirect($_SERVER['HTTP_REFERER']);
+				}
 			} else {
-				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 		} else {
-			$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
@@ -625,41 +619,45 @@ class Import extends Admin
 		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
 		// $jenisPTK = $this->input->post('jenis_ptk');
+		if (isset($_FILES["fileExcel"]["name"])) {
 
-		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+			if (in_array($_FILES["fileExcel"]["type"], $mimes)) {
 
-			$path = $_FILES["fileExcel"]["tmp_name"];
-			$object = PHPExcel_IOFactory::load($path);
-			foreach ($object->getWorksheetIterator() as $worksheet) {
-				$highestRow = $worksheet->getHighestRow();
-				$highestColumn = $worksheet->getHighestColumn();
-				for ($row = 9; $row <= $highestRow; $row++) {
-					$nisn = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$keluar = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
-					$tanggal = $worksheet->getCellByColumnAndRow(42, $row)->getValue();
+				$path = $_FILES["fileExcel"]["tmp_name"];
+				$object = PHPExcel_IOFactory::load($path);
+				foreach ($object->getWorksheetIterator() as $worksheet) {
+					$highestRow = $worksheet->getHighestRow();
+					$highestColumn = $worksheet->getHighestColumn();
+					for ($row = 9; $row <= $highestRow; $row++) {
+						$nisn = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+						$keluar = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
+						$tanggal = $worksheet->getCellByColumnAndRow(42, $row)->getValue();
 
-					$data_pdkeluar[] = array(
-						'nisn'    => $nisn,
-						'keluar_karena'    => $keluar,
-						'tanggal_keluar'    => $tanggal,
-						'created_by'    => $this->session->userdata('username')
-					);
+						$data_pdkeluar[] = array(
+							'nisn'    => $nisn,
+							'keluar_karena'    => $keluar,
+							'tanggal_keluar'    => $tanggal,
+							'created_by'    => $this->session->userdata('username')
+						);
+					}
 				}
-			}
 
-			if ($highestColumn == 'AQ') {
-				$rowtrim = 8;
-				$this->load->model('Model_datatable_pdkeluar');
-				$insert_pdkeluar = $this->Model_datatable_pdkeluar->insert_PesertaDidikKeluar($data_pdkeluar);
+				if ($highestColumn == 'AQ') {
+					$rowtrim = 8;
+					$this->load->model('Model_datatable_pdkeluar');
+					$insert_pdkeluar = $this->Model_datatable_pdkeluar->insert_PesertaDidikKeluar($data_pdkeluar);
 
-				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
-				redirect($_SERVER['HTTP_REFERER']);
+					$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+					redirect($_SERVER['HTTP_REFERER']);
+				} else {
+					$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+					redirect($_SERVER['HTTP_REFERER']);
+				}
 			} else {
-				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 		} else {
-			$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
@@ -674,68 +672,71 @@ class Import extends Admin
 		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
 		// $jenisPTK = $this->input->post('jenis_ptk');
+		if (isset($_FILES["fileExcel"]["name"])) {
+			if (in_array($_FILES["fileExcel"]["type"], $mimes)) {
 
-		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+				$path = $_FILES["fileExcel"]["tmp_name"];
+				$object = PHPExcel_IOFactory::load($path);
+				foreach ($object->getWorksheetIterator() as $worksheet) {
+					$highestRow = $worksheet->getHighestRow();
+					$highestColumn = $worksheet->getHighestColumn();
 
-			$path = $_FILES["fileExcel"]["tmp_name"];
-			$object = PHPExcel_IOFactory::load($path);
-			foreach ($object->getWorksheetIterator() as $worksheet) {
-				$highestRow = $worksheet->getHighestRow();
-				$highestColumn = $worksheet->getHighestColumn();
+					for ($row = 9; $row <= $highestRow; $row++) {
+						$jenisRombel = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+						$tingkat = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+						$namaRombel = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+						$kurikulum = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+						$program = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+						$nama_ptk = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+						$nuptk = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+						$ptk_induk = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+						$kepegawaian = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+						$nama_matpel = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+						$kode_matpel = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+						$jjm = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+						$jml_siswa = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
+						$tgl_sk_mengajar = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
+						$sk_mengajar = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
+						$status_kurikulum = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
 
-				for ($row = 9; $row <= $highestRow; $row++) {
-					$jenisRombel = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$tingkat = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$namaRombel = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$kurikulum = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$program = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$nama_ptk = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
-					$nuptk = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$ptk_induk = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
-					$kepegawaian = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
-					$nama_matpel = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
-					$kode_matpel = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
-					$jjm = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
-					$jml_siswa = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
-					$tgl_sk_mengajar = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
-					$sk_mengajar = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
-					$status_kurikulum = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
-
-					$data_pembelajaran[] = array(
-						'jenis_rombel'    => $jenisRombel,
-						'tingkat'    => $tingkat,
-						'nama_rombel'    => $namaRombel,
-						'kurikulum'    => $kurikulum,
-						'kompetensi_keahlian'    => $program,
-						'nama_ptk'    => $nama_ptk,
-						'nuptk'    => $nuptk,
-						'ptk_induk'    => $ptk_induk,
-						'kepegawaian'    => $kepegawaian,
-						'nama_matpel'    => $nama_matpel,
-						'kode_matpel'    => $kode_matpel,
-						'jjm'    => $jjm,
-						'jml_siswa'    => $jml_siswa,
-						'tgl_sk_mengajar'    => $tgl_sk_mengajar,
-						'sk_mengajar'    => $sk_mengajar,
-						'status_di_kurikulum'    => $status_kurikulum,
-						'created_by'    => $this->session->userdata('username')
-					);
+						$data_pembelajaran[] = array(
+							'jenis_rombel'    => $jenisRombel,
+							'tingkat'    => $tingkat,
+							'nama_rombel'    => $namaRombel,
+							'kurikulum'    => $kurikulum,
+							'kompetensi_keahlian'    => $program,
+							'nama_ptk'    => $nama_ptk,
+							'nuptk'    => $nuptk,
+							'ptk_induk'    => $ptk_induk,
+							'kepegawaian'    => $kepegawaian,
+							'nama_matpel'    => $nama_matpel,
+							'kode_matpel'    => $kode_matpel,
+							'jjm'    => $jjm,
+							'jml_siswa'    => $jml_siswa,
+							'tgl_sk_mengajar'    => $tgl_sk_mengajar,
+							'sk_mengajar'    => $sk_mengajar,
+							'status_di_kurikulum'    => $status_kurikulum,
+							'created_by'    => $this->session->userdata('username')
+						);
+					}
 				}
-			}
 
-			if ($highestColumn == 'Q') {
-				$rowtrim = 8;
-				$this->load->model('Model_datatable_pembelajaran');
-				$insert_pembelajaran = $this->model_datatable_pembelajaran->insert_Matpel($data_pembelajaran);
+				if ($highestColumn == 'Q') {
+					$rowtrim = 8;
+					$this->load->model('Model_datatable_pembelajaran');
+					$insert_pembelajaran = $this->model_datatable_pembelajaran->insert_Matpel($data_pembelajaran);
 
-				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
-				redirect($_SERVER['HTTP_REFERER']);
+					$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+					redirect($_SERVER['HTTP_REFERER']);
+				} else {
+					$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+					redirect($_SERVER['HTTP_REFERER']);
+				}
 			} else {
-				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 		} else {
-			$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}

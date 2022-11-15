@@ -90,7 +90,7 @@ class Model_datatable_pdkeluar extends CI_Model
         return $this->db->count_all_results();
     }
 
-    public function deleteSO_by_id()
+    public function deletePdKeluar_by_id()
     {
         $kodesekolah = $this->input->post('id');
         // $this->db->from($this->table);
@@ -100,8 +100,8 @@ class Model_datatable_pdkeluar extends CI_Model
 
     public function insert_PesertaDidikKeluar($data)
     {
-        $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik_keluar', $data);
-        if ($insert_PesertaDidik) {
+        $insert_PesertaDidikKeluar = $this->db->on_duplicate('pd_peserta_didik_keluar', $data);
+        if ($insert_PesertaDidikKeluar) {
             return true;
         }
     }
