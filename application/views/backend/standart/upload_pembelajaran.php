@@ -36,10 +36,10 @@
                             <div class="alert alert-info" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>
-                    <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
+                    <form action="<?= base_url('administrator/Import/import_pembelajaran'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
-                        <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly>
+                        <!-- <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly> -->
 
                         <!-- <div class="form-group">
                             <label>Tahun ajaran</label>
@@ -54,14 +54,14 @@
                         </div> -->
                         <div class="form-group">
                             <label>Pilih File Excel</label>
-                            <input type="file" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                            <input type="file" id="fileExcel" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                         </div>
                         <div>
                             <button id='import' name='import' class='btn btn-success' type="submit">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Import
                             </button>&nbsp;&nbsp;
-                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deleteStaff()">
+                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deleteMatpel()">
                                 <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;
                                 Hapus Data
                             </button>
@@ -77,7 +77,7 @@
 
                 <div class="box">
                     <div class="box-body">
-                        <table id="dataTableStaff" class="table table-bordered table-striped">
+                        <table id="dataTableMatpel" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -112,7 +112,7 @@
     var idsekolah = $("#idsekolah").val();
     // console.log(jenisptk);
 
-    $('#dataTableStaff').DataTable({
+    $('#dataTableMatpel').DataTable({
         processing: true,
         serverSide: true,
         // searchable: true,
@@ -139,15 +139,19 @@
         if (jumlahData == 0) {
             //alert();
             document.getElementById('hapus').disabled = true;
+            document.getElementById('import').disabled = false;
+            document.getElementById('fileExcel').disabled = false;
         } else {
             document.getElementById('hapus').disabled = false;
+            document.getElementById('import').disabled = true;
+            document.getElementById('fileExcel').disabled = true;
         }
-        // console.log(res);
+        console.log(res);
     });
 </script>
 
 <script>
-    function deleteStaff() {
+    function deleteMatpel() {
         const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
             csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
         var idsekolah = $("#idsekolah").val();
@@ -169,10 +173,9 @@
                     $.ajax({
                         dataType: 'json',
                         type: 'POST',
-                        url: '<?= base_url('administrator/import/deleteDataStaff') ?>',
+                        url: '<?= base_url('administrator/import/deleteDataMatpel') ?>',
                         data: {
                             id: idsekolah,
-                            ptk: jenisptk,
                             [csrfName]: csrfHash,
                         },
                         beforeSend: function() {

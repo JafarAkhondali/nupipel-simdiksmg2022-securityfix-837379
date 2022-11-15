@@ -126,7 +126,7 @@ class Import extends Admin
 			$row[] = $datas->nuptk;
 			$row[] = $datas->kepegawaian;
 			$row[] = $datas->nama_matpel;
-			$row[] = $datas->rombel;
+			$row[] = $datas->nama_rombel;
 			$data[] = $row;
 		}
 		$output = array(
@@ -211,16 +211,12 @@ class Import extends Admin
 	{
 		$this->model_datatable_staff->delete_by_id();
 		echo json_encode("del");
+	}
 
-		// if ($delete) {
-		// 	echo json_encode("del");
-		// 	// $this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil dihapus');
-		// 	redirect($_SERVER['HTTP_REFERER']);
-		// } else {
-		// 	echo json_encode("err");
-		// 	// $this->session->set_flashdata('error', '<span class="glyphicon glyphicon-ok"> </span> Error, gagal menghapus data');
-		// 	redirect($_SERVER['HTTP_REFERER']);
-		// }
+	function deleteDataMatpel()
+	{
+		$this->model_datatable_pembelajaran->deleteMatpel_by_id();
+		echo json_encode("del");
 	}
 
 	function deleteDataPD()
@@ -655,6 +651,82 @@ class Import extends Admin
 				$rowtrim = 8;
 				$this->load->model('Model_datatable_pdkeluar');
 				$insert_pdkeluar = $this->Model_datatable_pdkeluar->insert_PesertaDidikKeluar($data_pdkeluar);
+
+				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+				redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		} else {
+			$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi kesalahan, file Tidak Valid (Format file harus .xls atau .xlsx)');
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+
+
+	public function import_pembelajaran()
+	{
+		$config['allowed_types']    = 'xls|xlsx';
+		$this->load->library('upload', $config);
+		$temp = explode(".", $_FILES["file"]["name"]);
+		// $extension = end($temp);
+		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
+		// $jenisPTK = $this->input->post('jenis_ptk');
+
+		if (isset($_FILES["fileExcel"]["name"]) && in_array($_FILES["fileExcel"]["type"], $mimes)) {
+
+			$path = $_FILES["fileExcel"]["tmp_name"];
+			$object = PHPExcel_IOFactory::load($path);
+			foreach ($object->getWorksheetIterator() as $worksheet) {
+				$highestRow = $worksheet->getHighestRow();
+				$highestColumn = $worksheet->getHighestColumn();
+
+				for ($row = 9; $row <= $highestRow; $row++) {
+					$jenisRombel = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+					$tingkat = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+					$namaRombel = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+					$kurikulum = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+					$program = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+					$nama_ptk = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+					$nuptk = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+					$ptk_induk = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+					$kepegawaian = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+					$nama_matpel = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+					$kode_matpel = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+					$jjm = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+					$jml_siswa = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
+					$tgl_sk_mengajar = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
+					$sk_mengajar = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
+					$status_kurikulum = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
+
+					$data_pembelajaran[] = array(
+						'jenis_rombel'    => $jenisRombel,
+						'tingkat'    => $tingkat,
+						'nama_rombel'    => $namaRombel,
+						'kurikulum'    => $kurikulum,
+						'kompetensi_keahlian'    => $program,
+						'nama_ptk'    => $nama_ptk,
+						'nuptk'    => $nuptk,
+						'ptk_induk'    => $ptk_induk,
+						'kepegawaian'    => $kepegawaian,
+						'nama_matpel'    => $nama_matpel,
+						'kode_matpel'    => $kode_matpel,
+						'jjm'    => $jjm,
+						'jml_siswa'    => $jml_siswa,
+						'tgl_sk_mengajar'    => $tgl_sk_mengajar,
+						'sk_mengajar'    => $sk_mengajar,
+						'status_di_kurikulum'    => $status_kurikulum,
+						'created_by'    => $this->session->userdata('username')
+					);
+				}
+			}
+
+			if ($highestColumn == 'Q') {
+				$rowtrim = 8;
+				$this->load->model('Model_datatable_pembelajaran');
+				$insert_pembelajaran = $this->model_datatable_pembelajaran->insert_Matpel($data_pembelajaran);
 
 				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
 				redirect($_SERVER['HTTP_REFERER']);
