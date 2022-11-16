@@ -16,6 +16,7 @@ class Import extends Admin
 	{
 		parent::__construct();
 		// $this->load->model('ImportModel');
+		$this->load->database();
 		$this->load->model('model_datatable_staff');
 		$this->load->model('model_datatable_pd');
 		$this->load->model('model_datatable_pdkeluar');
@@ -75,6 +76,23 @@ class Import extends Admin
 		$this->render('backend/standart/upload_pembelajaran');
 	}
 
+
+	public function updatepd($id = null)
+	{
+		$data = array(
+			'status' => 'Non Aktif'
+		);
+		$this->db->where('nisn', $id);
+		$tolak = $this->db->update('pd_peserta_didik', $data);
+
+		if ($tolak) {
+			set_message('Ubah Status Non Aktif Berhasil', 'success');
+		} else {
+			set_message('Gagal update status', 'error');
+		}
+
+		redirect_back();
+	}
 
 
 
@@ -177,6 +195,7 @@ class Import extends Admin
 		$list = $this->model_datatable_pd->get_datatables();
 		$data = array();
 		$no = $this->input->post('start');
+		$url = base_url();
 
 		foreach ($list as $datas) {
 			$no++;
@@ -192,6 +211,7 @@ class Import extends Admin
 			$row[] = $datas->nik;
 			$row[] = $datas->agama;
 			$row[] = $datas->alamat;
+			$row[] = '<a href="updatepd/' . $datas->nisn . '" id="update-data" class="btn btn-info update-data" data-toggle="tooltip" data-placement="top" title="Update Status"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
 
 			$data[] = $row;
 		}
@@ -271,6 +291,8 @@ class Import extends Admin
 			foreach ($object->getWorksheetIterator() as $worksheet) {
 				$highestRow = $worksheet->getHighestRow();
 				$highestColumn = $worksheet->getHighestColumn();
+				$cell = $worksheet->getCellByColumnAndRow(1, 7)->getValue();
+
 				for ($row = 7; $row <= $highestRow; $row++) {
 					$nama = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
 					$nipd = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
@@ -434,7 +456,7 @@ class Import extends Admin
 				}
 			}
 
-			if ($highestColumn == 'BN') {
+			if ($highestColumn === 'BN' && $cell !== null) {
 				$this->load->model('Model_datatable_pd');
 				$insert_pesertadidik = $this->Model_datatable_pd->insert_PesertaDidik($data_pesertadidik);
 				$insert_detail_pesertadidik = $this->Model_datatable_pd->insertDetail_PesertaDidik($data_pesertadidik_detail);
@@ -475,6 +497,8 @@ class Import extends Admin
 				foreach ($object->getWorksheetIterator() as $worksheet) {
 					$highestRow = $worksheet->getHighestRow();
 					$highestColumn = $worksheet->getHighestColumn();
+					$cell = $worksheet->getCellByColumnAndRow(1, 6)->getValue();
+
 					for ($row = 6; $row <= $highestRow; $row++) {
 						$nama = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
 						$nuptk = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
@@ -590,7 +614,7 @@ class Import extends Admin
 					}
 				}
 
-				if ($highestColumn == 'AZ') {
+				if ($highestColumn === 'AZ' && $cell !== null) {
 					$rowtrim = 5;
 					$this->load->model('Model_datatable_staff');
 					$insert_staff = $this->Model_datatable_staff->insert_staff($data_staff);
@@ -614,20 +638,24 @@ class Import extends Admin
 	{
 		$config['allowed_types']    = 'xls|xlsx';
 		$this->load->library('upload', $config);
-		$temp = explode(".", $_FILES["file"]["name"]);
+
 		// $extension = end($temp);
 		$mimes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
 		// $jenisPTK = $this->input->post('jenis_ptk');
 		if (isset($_FILES["fileExcel"]["name"])) {
-
+			// $temp = explode(".", $_FILES["file"]["name"]);
 			if (in_array($_FILES["fileExcel"]["type"], $mimes)) {
+
 
 				$path = $_FILES["fileExcel"]["tmp_name"];
 				$object = PHPExcel_IOFactory::load($path);
 				foreach ($object->getWorksheetIterator() as $worksheet) {
 					$highestRow = $worksheet->getHighestRow();
 					$highestColumn = $worksheet->getHighestColumn();
+					$cell = $worksheet->getCellByColumnAndRow(3, 9)->getValue();
+					// echo json_encode($cell);
+
 					for ($row = 9; $row <= $highestRow; $row++) {
 						$nisn = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
 						$keluar = $worksheet->getCellByColumnAndRow(41, $row)->getValue();
@@ -642,7 +670,7 @@ class Import extends Admin
 					}
 				}
 
-				if ($highestColumn == 'AQ') {
+				if ($highestColumn === 'AQ' && $cell !== null) {
 					$rowtrim = 8;
 					$this->load->model('Model_datatable_pdkeluar');
 					$insert_pdkeluar = $this->Model_datatable_pdkeluar->insert_PesertaDidikKeluar($data_pdkeluar);
@@ -680,6 +708,8 @@ class Import extends Admin
 				foreach ($object->getWorksheetIterator() as $worksheet) {
 					$highestRow = $worksheet->getHighestRow();
 					$highestColumn = $worksheet->getHighestColumn();
+					$cell = $worksheet->getCellByColumnAndRow(1, 9)->getValue();
+
 
 					for ($row = 9; $row <= $highestRow; $row++) {
 						$jenisRombel = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
@@ -721,7 +751,7 @@ class Import extends Admin
 					}
 				}
 
-				if ($highestColumn == 'Q') {
+				if ($highestColumn === 'Q' && $cell !== null) {
 					$rowtrim = 8;
 					$this->load->model('Model_datatable_pembelajaran');
 					$insert_pembelajaran = $this->model_datatable_pembelajaran->insert_Matpel($data_pembelajaran);

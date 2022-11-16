@@ -19,6 +19,18 @@ class Model_datatable_pd extends CI_Model
         // $this->load->library('session');
     }
 
+    public function updateDataSiswa()
+    {
+        $nisn = $this->input->get('nisn');
+        $update_data = [
+            'status' => 'Non Aktif'
+        ];
+
+        $this->db->where('nisn', $nisn);
+        $this->db->update($this->table, $update_data);
+        return $this;
+    }
+
 
     private function _get_datatables_query()
     {

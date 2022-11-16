@@ -52,18 +52,15 @@
                         </div>
                         <div class="form-group">
                             <label>Pilih File Excel</label>
-                            <input type="file" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                            <input type="file" id='fileExcel' name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                         </div>
                         <div>
                             <button id='import' name='import' class='btn btn-success' type="submit">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 Import
                             </button>&nbsp;&nbsp;
-                            <button id='hapus' name='hapus' class='btn btn-danger' onclick="deletePD()">
-                                <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;
-                                Hapus Data
-                            </button>
-                            &nbsp;&nbsp;
+                            <a href="javascript:void(0);" id='hapus' class="btn btn-danger remove-data" data-toggle="tooltip" data-placement="top" title="<?= cclang('remove_button'); ?>"><i class="fa fa-close"></i> Hapus Data</a>
+
                             <span class="loading loading-hide">
                                 <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
                                 <i><?= 'Harap Tunggu sedang proses'; ?></i>
@@ -87,6 +84,8 @@
                                     <th>NIK</th>
                                     <th>Agama</th>
                                     <th>Alamat</th>
+                                    <th></th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -101,6 +100,7 @@
                                     <th>NIK</th>
                                     <th>Agama</th>
                                     <th>Alamat</th>
+                                    <th></th>
                                 </tr>
                             </tbody>
                         </table>
@@ -142,9 +142,14 @@
         var jumlahData = res;
         if (jumlahData == 0) {
             //alert();
-            document.getElementById('hapus').disabled = true;
+            $('.remove-data').addClass('disabled');
         } else {
-            document.getElementById('hapus').disabled = false;
+            $('.remove-data').removeClass('disabled');
+            document.getElementById('import').disabled = true;
+            document.getElementById('fileExcel').disabled = true;
+            document.getElementById('tahun_ajaran').disabled = true;
+
+
         }
         // console.log(res);
     });
@@ -155,7 +160,7 @@
         const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
             csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
         var idsekolah = $("#idsekolah").val();
-        console.log(idsekolah);
+        // console.log(idsekolah);
         swal({
                 title: "<?= cclang('are_you_sure'); ?>",
                 text: "Proses ini akan menghapus seluruh data yang telah anda import/ upload. Silakan upload ulang data anda apabila ada perbaikan",
@@ -194,6 +199,49 @@
                 }
             });
     }
+</script>
+
+<script>
+    $('.remove-data').click(function() {
+        const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
+            csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
+        var idsekolah = $("#idsekolah").val();
+        var jenisptk = $("#jenis_ptk").val();
+
+        swal({
+                title: "<?= cclang('are_you_sure'); ?>",
+                text: "Proses ini akan menghapus seluruh data yang telah anda import/ upload. Silakan upload ulang data anda apabila ada perbaikan",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Ya, Hapus",
+                cancelButtonText: "Batal",
+                closeOnConfirm: true,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: '<?= base_url('administrator/import/deleteDataPD') ?>',
+                        data: {
+                            id: idsekolah,
+                            [csrfName]: csrfHash,
+                        },
+                        beforeSend: function() {
+                            $('.loading').show();
+                        },
+                        complete: function() {
+                            $('.loading').show();
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+        return false;
+    });
 </script>
 
 <script>

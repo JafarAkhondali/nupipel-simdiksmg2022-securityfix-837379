@@ -63,6 +63,7 @@
                         <table id="dataTablePdKeluar" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>No</th>
                                     <th>NISN</th>
                                     <th>Alasan Keluar</th>
                                     <th>Tanggal</th>
@@ -70,6 +71,7 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <th>No</th>
                                     <th>NISN</th>
                                     <th>Alasan Keluar</th>
                                     <th>Tanggal</th>
