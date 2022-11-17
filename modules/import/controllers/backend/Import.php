@@ -30,12 +30,13 @@ class Import extends Admin
 			redirect('/', 'refresh');
 		}
 
-		$this->load->model('ImportModel');
-		$data = array(
-			'list_data'    => $this->ImportModel->getData()
-		);
+		$this->load->model('Model_datatable_pd');
 
-		$this->render('backend/standart/upload', $data);
+		$kodesekolah = $this->session->userdata('username');
+
+		$this->data['jumlah_siswa_aktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Aktif');
+		$this->data['jumlah_siswa_nonaktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Non Aktif');
+		$this->render('backend/standart/upload', $this->data);
 	}
 
 	public function staff()
@@ -77,10 +78,11 @@ class Import extends Admin
 	}
 
 
-	public function updatepd($id = null)
+	public function updatepd($id = null, $status = null)
 	{
+		$status = $this->input->get('status');
 		$data = array(
-			'status' => 'Non Aktif'
+			'status' => $status
 		);
 		$this->db->where('nisn', $id);
 		$tolak = $this->db->update('pd_peserta_didik', $data);
@@ -205,13 +207,18 @@ class Import extends Admin
 			$row[] = $datas->nisn;
 			$row[] = $datas->nama;
 			$row[] = $datas->nipd;
+			$row[] = $datas->rombel;
 			$row[] = $datas->jk;
 			$row[] = $datas->tanggal_lahir;
 			$row[] = $datas->tempat_lahir;
 			$row[] = $datas->nik;
 			$row[] = $datas->agama;
 			$row[] = $datas->alamat;
-			$row[] = '<a href="updatepd/' . $datas->nisn . '" id="update-data" class="btn btn-info update-data" data-toggle="tooltip" data-placement="top" title="Update Status"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+			if ($datas->status == 'Aktif') {
+				$row[] = '<a href="updatepd/' . $datas->nisn . '?status=Non Aktif" id="update-data" class="btn btn-danger update-data" data-toggle="tooltip" data-placement="top" title="Non Aktifkan"><i class="fa fa-ban" aria-hidden="true"></i></a>';
+			} else {
+				$row[] = '<a href="updatepd/' . $datas->nisn . '?status=Aktif" id="update-data" class="btn btn-info update-data" data-toggle="tooltip" data-placement="top" title="Aktifkan"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>';
+			}
 
 			$data[] = $row;
 		}
@@ -465,7 +472,7 @@ class Import extends Admin
 				$insert_data_rombel = $this->Model_datatable_pd->insert_Data_rombel($data_rombel);
 
 				$rowtrim = 6;
-				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
+				$this->session->set_flashdata('status', '<span class="glyphicon glyphicon-ok"> </span> Data Excel Berhasil di Import ke Database. Total : ' . ($highestRow - $rowtrim) . ' Record');
 				redirect($_SERVER['HTTP_REFERER']);
 			} else {
 				$this->session->set_flashdata('error', '<span class="glyphicon glyphicon-remove"> </span> Terjadi Kesalahan, Dokumen tidak sesuai template');

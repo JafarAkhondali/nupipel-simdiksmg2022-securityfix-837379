@@ -6,9 +6,9 @@ class Model_datatable_pd extends CI_Model
     //set nama tabel yang akan kita tampilkan datanya
     var $table = 'pd_peserta_didik';
     //set kolom order, kolom pertama saya null untuk kolom edit dan hapus
-    var $column_order = array(null, 'nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_order = array(null, 'a.nisn', 'a.nama', 'a.nipd', 'a.jk', 'a.tanggal_lahir', 'a.tempat_lahir', 'a.nik', 'a.agama', 'a.alamat');
 
-    var $column_search = array('nisn', 'nama', 'nipd', 'jk', 'tanggal_lahir', 'tempat_lahir', 'nik', 'agama', 'alamat');
+    var $column_search = array('a.nisn', 'a.nama', 'a.nipd', 'c.rombel');
     // default order 
     var $order = array('nama' => 'asc');
 
@@ -36,8 +36,15 @@ class Model_datatable_pd extends CI_Model
     {
         $kodesekolah = $this->input->post('id');
 
-        $this->db->from($this->table);
-        $this->db->where('created_by', $kodesekolah);
+        $this->db->from('pd_peserta_didik a');
+        $this->db->join('pd_detail_siswa b', 'b.nisn=a.nisn', 'left');
+        $this->db->join('pd_rombel c', 'c.nisn=a.nisn', 'left');
+        $this->db->where('a.created_by', $kodesekolah);
+        // $this->db->order_by('c.rombel', 'asc');
+        // $this->db->order_by('a.status', 'desc');
+
+        // $this->db->from($this->table);
+        // $this->db->where('created_by', $kodesekolah);
 
         $i = 0;
 
@@ -98,6 +105,14 @@ class Model_datatable_pd extends CI_Model
 
         $this->db->from($this->table);
         $this->db->where('created_by', $kodesekolah);
+
+        return $this->db->count_all_results();
+    }
+
+    public function count_siswa_by_id($kodesekolah, $status)
+    {
+        $this->db->from($this->table);
+        $this->db->where(array('created_by' => $kodesekolah, 'status' => $status));
 
         return $this->db->count_all_results();
     }
