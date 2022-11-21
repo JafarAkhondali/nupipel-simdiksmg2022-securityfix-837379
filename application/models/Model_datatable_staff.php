@@ -33,6 +33,14 @@ class Model_datatable_staff extends CI_Model
         }
     }
 
+    public function count_guru_by_id($kodesekolah, $status, $jenis)
+    {
+        $this->db->from($this->table);
+        $this->db->where(array('created_by' => $kodesekolah, 'status' => $status, 'jenis' => $jenis));
+
+        return $this->db->count_all_results();
+    }
+
 
     private function _get_datatables_query()
     {

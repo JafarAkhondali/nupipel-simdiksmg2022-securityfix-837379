@@ -32,7 +32,7 @@ class Import extends Admin
 
 		$this->load->model('Model_datatable_pd');
 
-		$kodesekolah = $this->session->userdata('username');
+		$kodesekolah = get_user_data('npsn');
 
 		$this->data['jumlah_siswa_aktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Aktif');
 		$this->data['jumlah_siswa_nonaktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Non Aktif');
@@ -44,11 +44,16 @@ class Import extends Admin
 		if (!$this->aauth->is_allowed('dashboard')) {
 			redirect('/', 'refresh');
 		}
-		// $this->load->model('Model_datatable_staff');
-		// $data2 = array(
-		// 	'list_data'    => $this->Model_datatable_staff->getDataStaff()
-		// );
-		$this->render('backend/standart/upload_staff');
+
+		$this->load->model('Model_datatable_staff');
+
+		$kodesekolah = get_user_data('npsn');
+
+		$this->data['jumlah_guru_aktif'] = $this->model_datatable_staff->count_guru_by_id($kodesekolah, 'Aktif', 'Guru');
+		$this->data['jumlah_guru_nonaktif'] = $this->model_datatable_staff->count_guru_by_id($kodesekolah, 'Non Aktif', 'Guru');
+
+
+		$this->render('backend/standart/upload_staff', $this->data);
 	}
 
 	public function tendik()
@@ -57,7 +62,14 @@ class Import extends Admin
 			redirect('/', 'refresh');
 		}
 
-		$this->render('backend/standart/upload_tendik');
+		$this->load->model('Model_datatable_staff');
+
+		$kodesekolah = get_user_data('npsn');
+
+		$this->data['jumlah_tendik_aktif'] = $this->model_datatable_staff->count_guru_by_id($kodesekolah, 'Aktif', 'Tendik');
+		$this->data['jumlah_tendik_nonaktif'] = $this->model_datatable_staff->count_guru_by_id($kodesekolah, 'Non Aktif', 'Tendik');
+
+		$this->render('backend/standart/upload_tendik', $this->data);
 	}
 
 
@@ -81,6 +93,7 @@ class Import extends Admin
 	public function updatepd($id = null, $status = null)
 	{
 		$status = $this->input->get('status');
+
 		$data = array(
 			'status' => $status
 		);
@@ -88,7 +101,7 @@ class Import extends Admin
 		$tolak = $this->db->update('pd_peserta_didik', $data);
 
 		if ($tolak) {
-			set_message('Ubah Status Non Aktif Berhasil', 'success');
+			set_message('Ubah Status ' . $status . ' Berhasil', 'success');
 		} else {
 			set_message('Gagal update status', 'error');
 		}
@@ -96,6 +109,29 @@ class Import extends Admin
 		redirect_back();
 	}
 
+	public function updatestaff($id = null, $status = null, $npsn = null)
+	{
+		$vnpsn = get_user_data('npsn');
+		$npsn = $this->input->get('npsn');
+		if ($vnpsn == $npsn) {
+			$status = $this->input->get('status');
+			$data = array(
+				'status' => $status
+			);
+			$this->db->where('nik', $id);
+			$update_status = $this->db->update('st_staff', $data);
+
+			if ($update_status) {
+				set_message('Ubah Status ' . $status . ' Berhasil', 'success');
+			} else {
+				set_message('Gagal update status', 'error');
+			}
+
+			redirect_back();
+		} else {
+			redirect_back();
+		}
+	}
 
 
 	function dataTableStaff()
@@ -115,6 +151,12 @@ class Import extends Admin
 			$row[] = $datas->nuptk;
 			$row[] = $datas->nip;
 			$row[] = $datas->status_kepegawaian;
+			if ($datas->status == 'Aktif') {
+
+				$row[] = '<a href="updatestaff/' . $datas->nik . '?status=Non Aktif&npsn=' . $datas->created_by . '" id="update-data" class="btn btn-danger update-data" data-toggle="tooltip" data-placement="top" title="Non Aktifkan"><i class="fa fa-ban" aria-hidden="true"></i></a>';
+			} else {
+				$row[] = '<a href="updatestaff/' . $datas->nik . '?status=Aktif&npsn=' . $datas->created_by . '" id="update-data" class="btn btn-info update-data" data-toggle="tooltip" data-placement="top" title="Aktifkan"><i class="fa fa-check-circle-o" aria-hidden="true"></i></a>';
+			}
 			$data[] = $row;
 		}
 		$output = array(
@@ -392,7 +434,7 @@ class Import extends Admin
 						'penerima_kps'    => $penerima_kps,
 						'no_kps'    => $no_kps,
 						'id_rombel'    => $rombel,
-						'created_by'    => $this->session->userdata('username')
+						'created_by'    => get_user_data('npsn')
 					);
 
 					$data_pesertadidik_detail[] = array(
@@ -420,7 +462,7 @@ class Import extends Admin
 						'lingkar_kepala'    => $lingkar_kepala,
 						'jml_saudara_kandung'    => $jml_saudara_kandung,
 						'jarak_rumah_ke_sekolah'    => $jarak_rumah_ke_sekolah,
-						'created_by'    => $this->session->userdata('username')
+						'created_by'    => get_user_data('npsn')
 					);
 
 					$data_orangtua[] = array(
@@ -438,7 +480,7 @@ class Import extends Admin
 						'pekerjaan_ibu'    => $pekerjaan_ibu,
 						'penghasilan_ibu'    => $penghasilan_ibu,
 						'nik_ibu'    => $nik_ibu,
-						'created_by'    => $this->session->userdata('username')
+						'created_by'    => get_user_data('npsn')
 					);
 
 					$data_wali[] = array(
@@ -450,7 +492,7 @@ class Import extends Admin
 						'pekerjaan'    => $pekerjaan_wali,
 						'penghasilan'    => $penghasilan_wali,
 						'nik'    => $nik_wali,
-						'created_by'    => $this->session->userdata('username')
+						'created_by'    => get_user_data('npsn')
 					);
 
 					$data_rombel[] = array(
@@ -458,7 +500,7 @@ class Import extends Admin
 						'nisn'    => $nisn,
 						'rombel'    => $rombel,
 						'tahun' => $tahun,
-						'created_by'    => $this->session->userdata('username')
+						'created_by'    => get_user_data('npsn')
 					);
 				}
 			}
@@ -616,7 +658,7 @@ class Import extends Admin
 							'bujur'    => $bujur,
 							'nuks'    => $nuks,
 							'jenis'    => $jenis,
-							'created_by'    => $this->session->userdata('username')
+							'created_by'    => get_user_data('npsn')
 						);
 					}
 				}
@@ -672,7 +714,7 @@ class Import extends Admin
 							'nisn'    => $nisn,
 							'keluar_karena'    => $keluar,
 							'tanggal_keluar'    => $tanggal,
-							'created_by'    => $this->session->userdata('username')
+							'created_by'    => get_user_data('npsn')
 						);
 					}
 				}
@@ -753,7 +795,7 @@ class Import extends Admin
 							'tgl_sk_mengajar'    => $tgl_sk_mengajar,
 							'sk_mengajar'    => $sk_mengajar,
 							'status_di_kurikulum'    => $status_kurikulum,
-							'created_by'    => $this->session->userdata('username')
+							'created_by'    => get_user_data('npsn')
 						);
 					}
 				}

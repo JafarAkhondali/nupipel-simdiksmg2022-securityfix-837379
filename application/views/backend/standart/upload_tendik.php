@@ -35,13 +35,13 @@
                             </script>
                             <div class="alert alert-info" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
-                    } ?>
-                    <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
-                        <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                        <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
-                        <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Tendik" readonly>
+                    } ?><div class="col-lg-6">
+                        <form action="<?= base_url('administrator/Import/import_staff'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
+                            <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                            <input type="hidden" id="idsekolah" name="idsekolah" value="<?= get_user_data('npsn') ?>" readonly>
+                            <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Tendik" readonly>
 
-                        <!-- <div class="form-group">
+                            <!-- <div class="form-group">
                             <label>Tahun ajaran</label>
                             <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran">
                                 <option value="">- Pilih Tahun -</option>
@@ -52,24 +52,57 @@
                                 <option value="2026">2026</option>
                             </select>
                         </div> -->
-                        <div class="form-group">
-                            <label>Pilih File Excel</label>
-                            <input type="file" id='fileExcel' name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
-                        </div>
-                        <div>
-                            <button id='import' name='import' class='btn btn-success' type="submit">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                Import
-                            </button>&nbsp;&nbsp;
-                            <a href="javascript:void(0);" id='hapus' class="btn btn-danger remove-data" data-toggle="tooltip" data-placement="top" title="<?= cclang('remove_button'); ?>"><i class="fa fa-close"></i> Hapus Data</a>
+                            <div class="form-group">
+                                <label>Pilih File Excel</label>
+                                <input type="file" id='fileExcel' name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                            </div>
+                            <div>
+                                <button id='import' name='import' class='btn btn-success' type="submit">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    Import
+                                </button>&nbsp;&nbsp;
+                                <a href="javascript:void(0);" id='hapus' class="btn btn-danger remove-data" data-toggle="tooltip" data-placement="top" title="<?= cclang('remove_button'); ?>"><i class="fa fa-close"></i> Hapus Data</a>
 
-                            <span class="loading loading-hide">
-                                <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
-                                <i><?= 'Harap Tunggu sedang proses'; ?></i>
-                            </span>
+                                <span class="loading loading-hide">
+                                    <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
+                                    <i><?= 'Harap Tunggu sedang proses'; ?></i>
+                                </span>
+                            </div><br>
+                            <div class="box-body" style="margin: auto;">
+                                Download template excel data guru <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_data_siswa.xslx" download>
+                                    <i class="fa fa-dropbox"></i> Download Template</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-3">
+
+                        <div class="small-box bg-aqua">
+                            <div class="inner">
+                                <h3><?= $jumlah_tendik_aktif ?> Tendik</h3>
+                                <p class="txSmall"><b>Aktif</b></p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">Jumlah Guru Aktif <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
-                    </form>
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <div class="small-box bg-red">
+                            <div class="inner">
+                                <h3><?= $jumlah_tendik_nonaktif ?> Tendik</h3>
+                                <p><b>Non Aktif</b></p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">Jumlah Guru Non Aktif <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
                 </div>
+
                 <hr>
 
                 <div class="box">
@@ -82,6 +115,7 @@
                                     <th>NUPTK</th>
                                     <th>NIP</th>
                                     <th>Status</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,6 +125,7 @@
                                     <td>NUPTK</td>
                                     <td>NIP</td>
                                     <td>Status</td>
+                                    <th></th>
                                 </tr>
                             </tbody>
 
@@ -219,6 +254,7 @@
                         url: '<?= base_url('administrator/import/deleteDataStaff') ?>',
                         data: {
                             id: idsekolah,
+                            ptk: jenisptk,
                             [csrfName]: csrfHash,
                         },
                         beforeSend: function() {

@@ -67,6 +67,17 @@
         <input type="password" class="form-control" placeholder="Password" name="password" value="">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+      <?php $cap = get_captcha(); ?>
+      <div class="form-group <?= form_error('email') ? 'has-error' : ''; ?>">
+        <label><small><?= 'Masukkan Captcha'; ?> <span class="required">*</span></small></label>
+        <div class="captcha-box" data-captcha-time="<?= $cap['time']; ?>">
+          <input type="text" name="captcha" placeholder="">
+          <a class="btn btn-flat  refresh-captcha  "><i class="fa fa-refresh text-danger"></i></a>
+          <span class="box-image"><?= $cap['image']; ?></span>
+        </div>
+      </div>
+      <small class="info help-block">
+      </small>
       <div class="row">
         <div class="col-xs-8">
           <div class="checkbox icheck">
@@ -80,18 +91,16 @@
           <button type="submit" class="btn btn-primary btn-block btn-flat"><?= cclang('sign_in'); ?></button>
         </div>
         <!-- /.col -->
-      </div>
+      </div><br>
+
       <?= form_close(); ?>
 
       <!-- /.social-auth-links -->
 
       <a href="<?= site_url('administrator/forgot-password'); ?>"><?= cclang('i_forgot_my_password'); ?></a><br>
-      <a href="<?= site_url('administrator/register'); ?>" class="text-center"><?= cclang('register_a_new_membership'); ?></a>
 
-      <br>
-      <br>
-      <p align="center"><b>-<?= cclang('or') ?>-</b></p>
-      <a href="<?= site_url('oauth/v/google'); ?>" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google"></i> <?= cclang('sign_in_using') ?> Google+</a>
+      <hr>
+      <p align="center"><b><?= 'Dinas Komunikasi Informatika Statistik & Persandian Kota Semarang - 2022' ?></b></p>
 
     </div>
     <!-- /.login-box-body -->
@@ -104,12 +113,51 @@
   <script src="<?= BASE_ASSET; ?>/admin-lte/bootstrap/js/bootstrap.min.js"></script>
   <!-- iCheck -->
   <script src="<?= BASE_ASSET; ?>/admin-lte/plugins/iCheck/icheck.min.js"></script>
+
+
   <script>
     $(function() {
+      var BASE_URL = "<?= base_url(); ?>";
+
+      $.fn.printMessage = function(opsi) {
+        var opsi = $.extend({
+          type: 'success',
+          message: 'Success',
+          timeout: 500000
+        }, opsi);
+
+        $(this).hide();
+        $(this).html(' <div class="col-md-12 message-alert" ><div class="callout callout-' + opsi.type + '"><h4>' + opsi.type + '!</h4>' + opsi.message + '</div></div>');
+        $(this).slideDown('slow');
+        // Run the effect
+        setTimeout(function() {
+          $('.message-alert').slideUp('slow');
+        }, opsi.timeout);
+      };
+
       $('input').iCheck({
         checkboxClass: 'icheckbox_square-blue',
         radioClass: 'iradio_square-blue',
         increaseArea: '20%' // optional
+      });
+      $('.refresh-captcha').on('click', function() {
+        var capparent = $(this);
+
+        $.ajax({
+            url: BASE_URL + '/captcha/reload/' + capparent.parent('.captcha-box').attr('data-captcha-time'),
+            dataType: 'JSON',
+          })
+          .done(function(res) {
+            capparent.parent('.captcha-box').find('.box-image').html(res.image);
+            capparent.parent('.captcha-box').attr('data-captcha-time', res.captcha.time);
+          })
+          .fail(function() {
+            $('.message').printMessage({
+              message: 'Error getting captcha',
+              type: 'warning'
+            });
+          })
+          .always(function() {});
       });
     });
   </script>

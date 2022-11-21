@@ -10,8 +10,9 @@
 </style>
 
 <section class="content-header">
-    <?= isset($breadcrumb) ? $breadcrumb : '' ?>
+
 </section>
+
 
 <section class="content">
     <div class="row">
@@ -21,10 +22,6 @@
                 <div class="box-header with-border">
                     <h3 class="box-title"><b>Upload Data Siswa/ Peserta Didik</b></h3>
 
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
-                    </div>
                 </div>
                 <div class="box-body chart-responsive">
                     <?php if (!empty($this->session->flashdata('status')) || !empty($this->session->flashdata('error'))) {
@@ -41,13 +38,21 @@
                             <div class="alert alert-success" role="alert"> <?= $this->session->flashdata('status'); ?></div>
                     <?php }
                     } ?>
-                    <div class="col-lg-6 col-xs-6">
+
+                    <div class="col-lg-3">
+                        <br>
+                        <center><img src="<?= BASE_ASSET; ?>/img/logo_disdik2.png" alt="" width="50%" height="50%">
+                            <h4><b>SDN Banyumanik 04</b></h4>
+                        </center>
+                    </div>
+                    <div class="col-lg-3">
                         <form action="<?= base_url('administrator/Import/import_pd'); ?>" method="post" enctype="multipart/form-data" name="form_upload_pd" id="form_upload_pd">
                             <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                            <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
+                            <input type="hidden" id="idsekolah" name="idsekolah" value="<?= get_user_data('npsn') ?>" readonly>
+
                             <div class="form-group">
                                 <label>Tahun ajaran</label>
-                                <select style="width:300px" class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran" required>
+                                <select style="width:230px" class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran" required>
                                     <option value="">- Pilih Tahun -</option>
                                     <option value="2022">2022</option>
                                     <option value="2023">2023</option>
@@ -72,9 +77,23 @@
                                     <i><?= 'Harap Tunggu sedang proses'; ?></i>
                                 </span>
                             </div>
+                            <div class="box box-warning">
+                                <div class="box-header with-border">
+
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="box-body" style="margin: auto;">
+                                    Download template excel data siswa <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_data_siswa.xslx" download>
+                                        <i class="fa fa-dropbox"></i> Download Template</a>
+                                </div>
+                            </div>
                         </form>
-                    </div>
-                    <div class="col-lg-3 col-xs-6">
+                    </div><br>
+
+                    <div class="col-lg-3">
 
                         <div class="small-box bg-aqua">
                             <div class="inner">
@@ -88,7 +107,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-xs-6">
+                    <div class="col-lg-3">
 
                         <div class="small-box bg-red">
                             <div class="inner">

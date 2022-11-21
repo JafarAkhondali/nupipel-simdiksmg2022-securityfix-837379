@@ -31,6 +31,7 @@ class Auth extends Admin
 
 		$this->form_validation->set_rules('username', 'Username', 'trim|required');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required');
+		$this->form_validation->set_rules('captcha', 'Captcha', 'trim|required|callback_valid_captcha');
 
 
 		if ($this->form_validation->run()) {

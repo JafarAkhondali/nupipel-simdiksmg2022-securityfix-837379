@@ -38,7 +38,7 @@
                     } ?>
                     <form action="<?= base_url('administrator/Import/import_pembelajaran'); ?>" method="post" enctype="multipart/form-data" name="form_upload_staff" id="form_upload_staff">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                        <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
+                        <input type="hidden" id="idsekolah" name="idsekolah" value="<?= get_user_data('npsn') ?>" readonly>
                         <!-- <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly> -->
 
                         <!-- <div class="form-group">

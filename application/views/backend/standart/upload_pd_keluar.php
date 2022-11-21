@@ -38,7 +38,7 @@
                     } ?>
                     <form action="<?= base_url('administrator/Import/import_pdkeluar'); ?>" method="post" enctype="multipart/form-data" name="form_upload_pd" id="form_upload_pd">
                         <input type="hidden" class="txt_csrfname" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
-                        <input type="hidden" id="idsekolah" name="idsekolah" value="<?= $this->session->userdata('username') ?>" readonly>
+                        <input type="hidden" id="idsekolah" name="idsekolah" value="<?= get_user_data('npsn') ?>" readonly>
                         <div class="form-group">
                             <label>Pilih File Excel</label>
                             <input type="file" id='fileExcel' name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
