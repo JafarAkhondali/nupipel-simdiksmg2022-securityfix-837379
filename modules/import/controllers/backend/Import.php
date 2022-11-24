@@ -21,6 +21,7 @@ class Import extends Admin
 		$this->load->model('model_datatable_pd');
 		$this->load->model('model_datatable_pdkeluar');
 		$this->load->model('model_datatable_pembelajaran');
+		$this->load->model('model_sekolah');
 		$this->load->library(array('excel', 'session'));
 	}
 
@@ -31,12 +32,31 @@ class Import extends Admin
 		}
 
 		$this->load->model('Model_datatable_pd');
+		$this->load->model('Model_sekolah');
+
 
 		$kodesekolah = get_user_data('npsn');
 
+		$this->data['sekolah'] = $this->model_sekolah->DetailSekolah();
 		$this->data['jumlah_siswa_aktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Aktif');
 		$this->data['jumlah_siswa_nonaktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Non Aktif');
 		$this->render('backend/standart/upload', $this->data);
+	}
+
+	public function backup()
+	{
+		if (!$this->aauth->is_allowed('dashboard')) {
+			redirect('/', 'refresh');
+		}
+
+		$this->load->model('Model_datatable_pd');
+		$this->load->model('Model_sekolah');
+
+		$kodesekolah = get_user_data('npsn');
+		$this->data['sekolah'] = $this->model_sekolah->DetailSekolah();
+		$this->data['detail_backup'] = $this->model_datatable_pd->getBackup($kodesekolah);
+		// $this->data['jumlah_siswa_nonaktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Non Aktif');
+		$this->render('backend/standart/backup', $this->data);
 	}
 
 	public function staff()
@@ -299,6 +319,29 @@ class Import extends Admin
 		return  json_encode("del");
 	}
 
+	function backupData()
+	{
+		$kodesekolah = get_user_data('npsn');
+		$tahunAjaran = '2022';
+
+		$data = array(
+			'kode' => $this->random(15),
+			'npsn' => $kodesekolah,
+			'tahun' => $tahunAjaran
+		);
+
+		$dataBackup = $this->model_datatable_pd->getBackupDataPd();
+		$backup = $this->model_datatable_pd->backup_PesertaDidik($dataBackup);
+		$insertBackup = $this->model_datatable_pd->insert_Data_backup($data);
+
+		if ($backup && $insertBackup) {
+			set_message('Backup data berhasil', 'success');
+		} else {
+			set_message('Terjadikesalahan, Backup gagal', 'error');
+		}
+		//var_dump($backup);
+	}
+
 	function cekDatatableStaff()
 	{
 		$jumlahdata = $this->model_datatable_staff->count_all();
@@ -411,6 +454,7 @@ class Import extends Admin
 
 					$data_pesertadidik[] = array(
 						'nisn'    => $nisn,
+						'npsn'    => get_user_data('npsn'),
 						'nama'    => $nama,
 						'nipd'    => $nipd,
 						'jk'    => $jk,
@@ -818,6 +862,18 @@ class Import extends Admin
 		} else {
 			redirect($_SERVER['HTTP_REFERER']);
 		}
+	}
+
+	function random($length)
+	{
+		$char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNPQRSUVWXYZ123456789~!@#$%^&*?';
+		$result = 'backup-';
+		for ($i = 0; $i < $length; $i++) {
+			$pos = rand(0, strlen($char) - 1);
+			$result .= $char{
+				$pos};
+		}
+		return $result;
 	}
 }
 

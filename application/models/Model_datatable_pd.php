@@ -31,7 +31,6 @@ class Model_datatable_pd extends CI_Model
         return $this;
     }
 
-
     private function _get_datatables_query()
     {
         $kodesekolah = $this->input->post('id');
@@ -109,6 +108,15 @@ class Model_datatable_pd extends CI_Model
         return $this->db->count_all_results();
     }
 
+    public function getBackup($id)
+    {
+        $this->db->from('backup');
+        $this->db->where('npsn', $id);
+        $query = $this->db->get();
+        //var_dump($query);
+        return $query->result();
+    }
+
     public function count_siswa_by_id($kodesekolah, $status)
     {
         $this->db->from($this->table);
@@ -130,6 +138,26 @@ class Model_datatable_pd extends CI_Model
         $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik', $data);
         if ($insert_PesertaDidik) {
             return true;
+        }
+    }
+
+    public function getBackupDataPd()
+    {
+        $kodesekolah = $this->input->post('id');
+
+        $this->db->from($this->table);
+        $this->db->where('created_by', $kodesekolah);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function backup_PesertaDidik($data)
+    {
+        $backup_PesertaDidik = $this->db->on_duplicate('backup_peserta_didik', $data);
+        if ($backup_PesertaDidik) {
+            return json_encode('berhasil');
+        } else {
+            return json_encode('gagal');
         }
     }
 
@@ -161,6 +189,14 @@ class Model_datatable_pd extends CI_Model
     {
         $insert_Data_rombel = $this->db->on_duplicate('pd_rombel', $data);
         if ($insert_Data_rombel) {
+            return true;
+        }
+    }
+
+    public function insert_Data_backup($data)
+    {
+        $insert_Data_backup = $this->db->insert('backup', $data);
+        if ($insert_Data_backup) {
             return true;
         }
     }

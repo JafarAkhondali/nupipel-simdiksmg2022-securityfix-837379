@@ -42,7 +42,8 @@
                     <div class="col-lg-3">
                         <br>
                         <center><img src="<?= BASE_ASSET; ?>/img/logo_disdik2.png" alt="" width="50%" height="50%">
-                            <h4><b>SDN Banyumanik 04</b></h4>
+                            <h4><b><?= $sekolah[0]['nama_satuan_pendidikan']; ?></b></h4>
+                            <small><?= $sekolah[0]['alamat'] ?></small>
                         </center>
                     </div>
                     <div class="col-lg-3">
@@ -71,7 +72,7 @@
                                     Import
                                 </button>&nbsp;&nbsp;
                                 <a href="javascript:void(0);" id='hapus' class="btn btn-danger remove-data" data-toggle="tooltip" data-placement="top" title="<?= cclang('remove_button'); ?>"><i class="fa fa-close"></i> Hapus Data</a>
-
+                                <br><br>
                                 <span class="loading loading-hide">
                                     <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
                                     <i><?= 'Harap Tunggu sedang proses'; ?></i>
@@ -87,8 +88,12 @@
                                 </div>
                                 <div class="box-body" style="margin: auto;">
                                     Download template excel data siswa <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_data_siswa.xslx" download>
-                                        <i class="fa fa-dropbox"></i> Download Template</a>
+                                        <i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Download Template</a>
                                 </div>
+                                <span class="loading-backup loading-hide">
+                                    <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
+                                    <i><?= 'Harap Tunggu sedang proses backup'; ?></i>
+                                </span>
                             </div>
                         </form>
                     </div><br>
@@ -304,6 +309,49 @@
                         },
                         complete: function() {
                             $('.loading').show();
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+        return false;
+    });
+</script>
+
+<script>
+    $('.btn-backup').click(function() {
+        const csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>',
+            csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
+        var idsekolah = $("#idsekolah").val();
+        // var jenisptk = $("#jenis_ptk").val();
+
+        swal({
+                title: "<?= cclang('are_you_sure'); ?>",
+                text: "Proses ini apabila anda akan melakukan updating data untuk tahun ajaran baru, memindahkan data siswa tahun sebelumnya ke tabel backup.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#00E06D",
+                confirmButtonText: "Backup Data Siswa",
+                cancelButtonText: "Batal",
+                closeOnConfirm: true,
+                closeOnCancel: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: '<?= base_url('administrator/import/backupDataPd') ?>',
+                        data: {
+                            id: idsekolah,
+                            [csrfName]: csrfHash,
+                        },
+                        beforeSend: function() {
+                            $('.loading-backup').show();
+                        },
+                        complete: function() {
+                            $('.loading-backup').show();
                             location.reload();
                         }
                     });
