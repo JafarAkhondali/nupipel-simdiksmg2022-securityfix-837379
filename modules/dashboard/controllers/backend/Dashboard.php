@@ -35,6 +35,12 @@ class Dashboard extends Admin
 		$data = [];
 		$this->render('backend/standart/chart', $data);
 	}
+
+	public function testing()
+	{
+		$this->template->title('Dashboard');
+		$this->render('backend/standart/administrator/dashboard/viewpd');
+	}
 }
 
 /* End of file Dashboard.php */

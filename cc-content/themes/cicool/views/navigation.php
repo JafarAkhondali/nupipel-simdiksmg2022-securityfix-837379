@@ -1,55 +1,49 @@
+<style>
+    .nav-item a {
+        font-weight: 500;
+    }
 
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand page-scroll" href="#page-top"><?= site_name(); ?></a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-            	<?php foreach (get_menu('top-menu') as $menu): ?>
-                    <?php if (app()->aauth->is_allowed('menu_'.$menu->label)): ?>
-                        <li>
-                            <a class="page-scroll" href="<?= site_url($menu->link); ?>"><?= $menu->label; ?></a>
-                        </li>
-                    <?php endif ?>
-            	<?php endforeach; ?>
-                <?php if (!app()->aauth->is_loggedin()): ?>
-                <li>
-                    <a class="page-scroll" href="<?= site_url('administrator/login'); ?>"><i class="fa fa-sign-in"></i> <?= cclang('login'); ?></a>
+    .navbar-nav>li {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+</style>
+<nav class="navbar navbar-expand-lg py-4" style="background-color: #e3f2fd;">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <!-- <img src="/docs/5.2/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> -->
+            <strong>SIMPEN</strong> - Sistem Informasi Pendidikan Kota Semarang
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Beranda</a>
                 </li>
-                <?php else: ?>
-                <li>
-                    <a class="page-scroll dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-                        <img src="<?= BASE_URL.'uploads/user/'.(!empty(get_user_data('avatar')) ? get_user_data('avatar') :'default.png'); ?>" class="img-circle img-user" alt="User Image"> 
-                        <?= get_user_data('full_name'); ?>
-                        <span class="caret"></span>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Satuan Pendidikan
                     </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="<?= site_url('administrator/user/profile'); ?>">My Profile</a>
-                        <a class="dropdown-item" href="<?= site_url('administrator/dashboard'); ?>">Dashboard</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="<?= site_url('administrator/auth/logout'); ?>"><i class="fa fa-sign-out"></i> Logout</a>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">PAUD</a></li>
+                        <li><a class="dropdown-item" href="#">Pendidikan Dasar</a></li>
+                        <li><a class="dropdown-item" href="#">Pendidikan Menengah</a></li>
+                        <li><a class="dropdown-item" href="#">Pendidikan Non Formal</a></li>
+                        <li><a class="dropdown-item" href="#">Pendidikan Khusus</a></li>
+                    </ul>
                 </li>
-                <?php endif; ?>
-                <li class="dropdown ">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                 <span class="flag-icon <?=get_current_initial_lang(); ?>"></span> <?= get_current_lang(); ?> </a>
-                 <ul class="dropdown-menu" role="menu">
-                 <?php foreach (get_langs() as $lang): ?>
-                    <li><a href="<?= site_url('web/switch_lang/'.$lang['folder_name']); ?>"><span class="flag-icon <?= $lang['icon_name']; ?>"></span> <?= $lang['name']; ?></a></li>
-                  <?php endforeach; ?>
-                 </ul>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Peserta Didik</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Tentang</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pencarian</a>
+                </li>
             </ul>
         </div>
-        <!-- /.navbar-collapse -->
     </div>
-    <!-- /.container-fluid -->
 </nav>

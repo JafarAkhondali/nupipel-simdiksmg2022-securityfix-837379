@@ -1,17 +1,17 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 
 /**
-*| --------------------------------------------------------------------------
-*| User Controller
-*| --------------------------------------------------------------------------
-*| user site
-*|
-*/
-class User extends Admin	
+ *| --------------------------------------------------------------------------
+ *| User Controller
+ *| --------------------------------------------------------------------------
+ *| user site
+ *|
+ */
+class User extends Admin
 {
-	
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -20,10 +20,10 @@ class User extends Admin
 	}
 
 	/**
-	* show all users
-	*
-	* @var $offset String
-	*/
+	 * show all users
+	 *
+	 * @var $offset String
+	 */
 	public function index($offset = 0)
 	{
 		$this->is_allowed('user_list');
@@ -48,9 +48,9 @@ class User extends Admin
 	}
 
 	/**
-	* show all users
-	*
-	*/
+	 * show all users
+	 *
+	 */
 	public function add()
 	{
 		$this->is_allowed('user_add');
@@ -60,17 +60,17 @@ class User extends Admin
 	}
 
 	/**
-	* Add New users
-	*
-	* @return JSON
-	*/
+	 * Add New users
+	 *
+	 * @return JSON
+	 */
 	public function add_save()
 	{
 		if (!$this->is_allowed('user_add', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 
 		$this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[aauth_users.username]');
@@ -96,8 +96,10 @@ class User extends Admin
 					mkdir(FCPATH . '/uploads/user');
 				}
 
-				@rename(FCPATH . 'uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name, 
-						FCPATH . 'uploads/user/' . $user_avatar_name_copy);
+				@rename(
+					FCPATH . 'uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name,
+					FCPATH . 'uploads/user/' . $user_avatar_name_copy
+				);
 
 				$save_data['avatar'] = $user_avatar_name_copy;
 			}
@@ -109,7 +111,7 @@ class User extends Admin
 				if (count($this->input->post('group'))) {
 					$user_id = $save_user;
 					foreach ($this->input->post('group') as $group_id) {
-						$this->aauth->add_member($user_id, $group_id);				
+						$this->aauth->add_member($user_id, $group_id);
 					}
 				}
 				if ($this->input->post('save_type') == 'stay') {
@@ -121,17 +123,18 @@ class User extends Admin
 				} else {
 					set_message(
 						cclang('success_save_data_redirect', [
-						anchor('administrator/user/edit/' . $save_user, 'Edit User')
-					]), 'success');
+							anchor('administrator/user/edit/' . $save_user, 'Edit User')
+						]),
+						'success'
+					);
 
-	        		$this->response['success'] = true;
+					$this->response['success'] = true;
 					$this->response['redirect'] = site_url('administrator/user');
 				}
 			} else {
 				$this->response['success'] = false;
 				$this->response['message'] = $this->aauth->print_errors();
 			}
-
 		} else {
 			$this->response['success'] = false;
 			$this->response['message'] = validation_errors();
@@ -141,10 +144,10 @@ class User extends Admin
 	}
 
 	/**
-	* Update view users
-	*
-	* @var $id String
-	*/
+	 * Update view users
+	 *
+	 * @var $id String
+	 */
 	public function edit($id)
 	{
 		$this->is_allowed('user_update');
@@ -159,17 +162,17 @@ class User extends Admin
 	}
 
 	/**
-	* Update users
-	*
-	* @var $id String
-	*/
+	 * Update users
+	 *
+	 * @var $id String
+	 */
 	public function edit_save($id)
 	{
 		if (!$this->is_allowed('user_update', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 
 		$this->form_validation->set_rules('username', 'Username', 'trim|required');
@@ -186,15 +189,17 @@ class User extends Admin
 			if (!empty($user_avatar_name)) {
 				if (!empty($user_avatar_uuid)) {
 					$user_avatar_name_copy = date('YmdHis') . '-' . $user_avatar_name;
-		
-					rename(FCPATH . '/uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name, 
-							FCPATH . '/uploads/user/' . $user_avatar_name_copy);
+
+					rename(
+						FCPATH . '/uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name,
+						FCPATH . '/uploads/user/' . $user_avatar_name_copy
+					);
 
 					if (!is_file(FCPATH . '/uploads/user/' . $user_avatar_name_copy)) {
 						return $this->response([
 							'success' => false,
 							'message' => 'Error uploading avatar'
-							]);
+						]);
 						exit;
 					}
 
@@ -215,7 +220,7 @@ class User extends Admin
 				$this->db->delete('aauth_user_to_group', ['user_id' => $id]);
 				if (count($this->input->post('group'))) {
 					foreach ($this->input->post('group') as $group_id) {
-						$this->aauth->add_member($id, $group_id);				
+						$this->aauth->add_member($id, $group_id);
 					}
 				}
 
@@ -226,17 +231,17 @@ class User extends Admin
 					]);
 				} else {
 					set_message(
-						cclang('success_update_data_redirect', [
-					]), 'success');
+						cclang('success_update_data_redirect', []),
+						'success'
+					);
 
-	        		$this->response['success'] = true;
+					$this->response['success'] = true;
 					$this->response['redirect'] = site_url('administrator/user');
 				}
 			} else {
 				$this->response['success'] = false;
-				$this->response['message'] = cclang('data_not_change').$this->aauth->print_errors();
+				$this->response['message'] = cclang('data_not_change') . $this->aauth->print_errors();
 			}
-
 		} else {
 			$this->response['success'] = false;
 			$this->response['message'] = validation_errors();
@@ -246,10 +251,10 @@ class User extends Admin
 	}
 
 	/**
-	* delete users
-	*
-	* @var $id String
-	*/
+	 * delete users
+	 *
+	 * @var $id String
+	 */
 	public function delete($id = null)
 	{
 		$this->is_allowed('user_delete');
@@ -261,26 +266,26 @@ class User extends Admin
 
 		if (!empty($id)) {
 			$remove = $this->_remove($id);
-		} elseif (count($arr_id) >0) {
+		} elseif (count($arr_id) > 0) {
 			foreach ($arr_id as $id) {
 				$remove = $this->_remove($id);
 			}
 		}
-		
+
 		if ($remove) {
-            set_message(cclang('has_been_deleted', 'User'), 'success');
-        } else {
-            set_message(cclang('error_delete', 'User'), 'error');
-        }
+			set_message(cclang('has_been_deleted', 'User'), 'success');
+		} else {
+			set_message(cclang('error_delete', 'User'), 'error');
+		}
 
 		redirect_back();
 	}
 
 	/**
-	* View view users
-	*
-	* @var $id String
-	*/
+	 * View view users
+	 *
+	 * @var $id String
+	 */
 	public function view($id)
 	{
 		$this->is_allowed('user_view');
@@ -292,9 +297,9 @@ class User extends Admin
 	}
 
 	/**
-	* Profile user
-	*
-	*/
+	 * Profile user
+	 *
+	 */
 	public function profile()
 	{
 		$this->is_allowed('user_profile');
@@ -306,9 +311,9 @@ class User extends Admin
 	}
 
 	/**
-	* Update view profile
-	*
-	*/
+	 * Update view profile
+	 *
+	 */
 	public function edit_profile()
 	{
 		$this->is_allowed('user_update_profile');
@@ -323,17 +328,17 @@ class User extends Admin
 	}
 
 	/**
-	* Update profile
-	*
-	* @var $id String
-	*/
+	 * Update profile
+	 *
+	 * @var $id String
+	 */
 	public function edit_profile_save($id)
 	{
 		if (!$this->is_allowed('user_update_profile', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 
 		$this->form_validation->set_rules('username', 'Username', 'trim|required');
@@ -350,15 +355,17 @@ class User extends Admin
 			if (!empty($user_avatar_name)) {
 				if (!empty($user_avatar_uuid)) {
 					$user_avatar_name_copy = date('YmdHis') . '-' . $user_avatar_name;
-		
-					rename(FCPATH . '/uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name, 
-							FCPATH . '/uploads/user/' . $user_avatar_name_copy);
+
+					rename(
+						FCPATH . '/uploads/tmp/' . $user_avatar_uuid . '/' . $user_avatar_name,
+						FCPATH . '/uploads/user/' . $user_avatar_name_copy
+					);
 
 					if (!is_file(FCPATH . '/uploads/user/' . $user_avatar_name_copy)) {
 						return $this->response([
 							'success' => false,
 							'message' => 'Error uploading avatar'
-							]);
+						]);
 						exit;
 					}
 
@@ -377,10 +384,10 @@ class User extends Admin
 			if ($save_user) {
 				$this->data['success'] = true;
 				$this->data['id'] 	   = $id;
-				$this->data['message'] = 'Your data has been successfully updated into the database. '.anchor('administrator/user', ' Go back to list');
+				$this->data['message'] = 'Your data has been successfully updated into the database. ' . anchor('administrator/user', ' Go back to list');
 			} else {
 				$this->data['success'] = false;
-				$this->data['message'] = cclang('data_not_change').$this->aauth->print_errors();
+				$this->data['message'] = cclang('data_not_change') . $this->aauth->print_errors();
 			}
 		} else {
 			$this->data['success'] = false;
@@ -391,10 +398,10 @@ class User extends Admin
 	}
 
 	/**
-	* delete users
-	*
-	* @var $id String
-	*/
+	 * delete users
+	 *
+	 * @var $id String
+	 */
 	private function _remove($id)
 	{
 		$user = $this->model_user->find($id);
@@ -411,17 +418,17 @@ class User extends Admin
 	}
 
 	/**
-	* Upload Image User
-	* 
-	* @return JSON
-	*/
+	 * Upload Image User
+	 * 
+	 * @return JSON
+	 */
 	public function upload_avatar_file()
 	{
 		if (!$this->is_allowed('user_add', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 
 		$uuid = $this->input->post('qquuid');
@@ -433,19 +440,18 @@ class User extends Admin
 			'allowed_types' 	=> 'png|jpeg|jpg|gif',
 			'max_size'  		=> '1000'
 		];
-		
+
 		$this->load->library('upload', $config);
 		$this->load->helper('file');
 
-		if ( ! $this->upload->do_upload('qqfile')){
+		if (!$this->upload->do_upload('qqfile')) {
 			$result = [
 				'success' 	=> false,
 				'error' 	=>  $this->upload->display_errors()
 			];
 
-    		return $this->response($result);
-		}
-		else{
+			return $this->response($result);
+		} else {
 			$upload_data = $this->upload->data();
 
 			$result = [
@@ -453,22 +459,22 @@ class User extends Admin
 				'success' 		=> true,
 			];
 
-    		return $this->response($result);
+			return $this->response($result);
 		}
 	}
 
 	/**
-	* Delete Image User
-	* 
-	* @return JSON
-	*/
+	 * Delete Image User
+	 * 
+	 * @return JSON
+	 */
 	public function delete_avatar_file($uuid)
 	{
 		if (!$this->is_allowed('user_delete', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 
 		if (!empty($uuid)) {
@@ -484,9 +490,9 @@ class User extends Admin
 						'success' => true,
 					];
 
-		    		return $this->response($result);
-				} 
-				$path = FCPATH . 'uploads/user/'.$user->avatar;
+					return $this->response($result);
+				}
+				$path = FCPATH . 'uploads/user/' . $user->avatar;
 
 				if (isset($uuid)) {
 					if (is_file($path)) {
@@ -510,32 +516,32 @@ class User extends Admin
 					'error' =>  'Error delete file'
 				];
 
-	    		return $this->response($result);
+				return $this->response($result);
 			} else {
 				$result = [
 					'success' => true,
 				];
 
-	    		return $this->response($result);
+				return $this->response($result);
 			}
 		}
 	}
 
 	/**
-	* Get Image User
-	* 
-	* @return JSON
-	*/
+	 * Get Image User
+	 * 
+	 * @return JSON
+	 */
 	public function get_avatar_file($id)
 	{
 		if (!$this->is_allowed('user_update', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 		$this->load->helper('file');
-		
+
 		$user = $this->model_user->find($id);
 
 		if (!$user) {
@@ -543,12 +549,12 @@ class User extends Admin
 				'error' =>  'Error getting file'
 			];
 
-    		return $this->response($result);
+			return $this->response($result);
 		} else {
 			if (!empty($user->avatar)) {
 				$result[] = [
 					'success' 				=> true,
-					'thumbnailUrl' 			=> base_url('uploads/user/'.$user->avatar),
+					'thumbnailUrl' 			=> base_url('uploads/user/' . $user->avatar),
 					'id' 					=> 0,
 					'name' 					=> $user->avatar,
 					'uuid' 					=> $user->id,
@@ -556,23 +562,23 @@ class User extends Admin
 					'deleteFileParams'		=> ['by' => 'id']
 				];
 
-	    		return $this->response($result);
+				return $this->response($result);
 			}
 		}
 	}
 
 	/**
-	* Set status user
-	*
-	* @return JSON
-	*/
+	 * Set status user
+	 *
+	 * @return JSON
+	 */
 	public function set_status()
 	{
 		if (!$this->is_allowed('user_update_status', false)) {
 			return $this->response([
 				'success' => false,
 				'message' => cclang('sorry_you_do_not_have_permission_to_access')
-				]);
+			]);
 		}
 		$status = $this->input->post('status');
 		$id = $this->input->post('id');
@@ -580,7 +586,7 @@ class User extends Admin
 		$update_status = $this->model_user->change($id, [
 			'banned' => $status == 'inactive' ? 1 : 0
 		]);
-		
+
 		if ($update_status) {
 			$this->response = [
 				'success' => true,
@@ -597,10 +603,10 @@ class User extends Admin
 	}
 
 	/**
-	* Export to excel
-	*
-	* @return Files Excel .xls
-	*/
+	 * Export to excel
+	 *
+	 * @return Files Excel .xls
+	 */
 	public function export()
 	{
 		$this->is_allowed('user_export');
@@ -608,10 +614,10 @@ class User extends Admin
 	}
 
 	/**
-	* Export to PDF
-	*
-	* @return Files PDF .pdf
-	*/
+	 * Export to PDF
+	 *
+	 * @return Files PDF .pdf
+	 */
 	public function export_pdf()
 	{
 		$this->is_allowed('user_export');
