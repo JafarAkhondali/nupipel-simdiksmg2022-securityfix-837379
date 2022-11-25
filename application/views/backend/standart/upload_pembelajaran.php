@@ -41,17 +41,6 @@
                         <input type="hidden" id="idsekolah" name="idsekolah" value="<?= get_user_data('npsn') ?>" readonly>
                         <!-- <input type="hidden" id="jenis_ptk" name="jenis_ptk" value="Guru" readonly> -->
 
-                        <!-- <div class="form-group">
-                            <label>Tahun ajaran</label>
-                            <select class="form-control select2 required" id="tahun_ajaran" name="tahun_ajaran">
-                                <option value="">- Pilih Tahun -</option>
-                                <option value="2022">2022</option>
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                            </select>
-                        </div> -->
                         <div class="form-group">
                             <label>Pilih File Excel</label>
                             <input type="file" id="fileExcel" name="fileExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
@@ -67,6 +56,10 @@
                                 <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
                                 <i><?= 'Harap Tunggu sedang proses'; ?></i>
                             </span>
+                        </div><br>
+                        <div class="box-body" style="margin: auto;">
+                            Download template excel data pembelajaran <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_pembelajaran.xslx" download>
+                                <i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Download Template</a>
                         </div>
                     </form>
                 </div>

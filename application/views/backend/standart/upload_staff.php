@@ -71,7 +71,7 @@
                             </div><br>
                             <div class="box-body" style="margin: auto;">
                                 Download template excel data guru <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_data_guru.xslx" download>
-                                    <i class="fa fa-dropbox"></i> Download Template</a>
+                                    <i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Download Template</a>
                             </div>
                         </form>
                     </div>

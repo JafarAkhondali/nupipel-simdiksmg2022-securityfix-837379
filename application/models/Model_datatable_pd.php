@@ -108,12 +108,10 @@ class Model_datatable_pd extends CI_Model
         return $this->db->count_all_results();
     }
 
-    public function getBackup($id)
+    public function getBackup()
     {
         $this->db->from('backup');
-        $this->db->where('npsn', $id);
         $query = $this->db->get();
-        //var_dump($query);
         return $query->result();
     }
 
@@ -133,9 +131,27 @@ class Model_datatable_pd extends CI_Model
         return $this->db->delete(array('pd_peserta_didik', 'pd_detail_siswa', 'pd_data_wali', 'pd_orang_tua', 'pd_rombel'));
     }
 
+    public function deleteBackupTabel()
+    {
+        $tahun = $this->input->get('tahun');
+        $id = $this->input->get('id');
+
+        $this->db->where('id', $id);
+        $res = $this->db->delete('backup');
+
+        if ($res) {
+            $delete_backup = $this->db->query('DROP TABLE IF EXISTS backup_peserta_didik_' . $tahun . ', backup_rombel_' . $tahun . ', backup_staff_' . $tahun . '');
+            return $delete_backup;
+        } else {
+            return false;
+        }
+    }
+
     public function insert_PesertaDidik($data)
     {
+        $npsn = get_user_data('npsn');
         $insert_PesertaDidik = $this->db->on_duplicate('pd_peserta_didik', $data);
+        $insert_PesertaDidik = $this->db->where('npsn', $npsn);
         if ($insert_PesertaDidik) {
             return true;
         }
@@ -151,6 +167,25 @@ class Model_datatable_pd extends CI_Model
         return $query->result_array();
     }
 
+    public function Backup_by_tahun()
+    {
+        $tahun = $this->input->post('tahun');
+
+        $tabel_pd_backup = $this->db->query('CREATE TABLE IF NOT EXISTS  backup_peserta_didik_' . $tahun . ' LIKE pd_peserta_didik');
+        $tabel_staff_backup = $this->db->query('CREATE TABLE IF NOT EXISTS  backup_staff_' . $tahun . ' LIKE st_staff');
+        $tabel_rombel_backup = $this->db->query('CREATE TABLE IF NOT EXISTS  backup_rombel_' . $tahun . ' LIKE pd_rombel');
+        //$tabel_detailpd_backup = $this->db->query('CREATE TABLE IF NOT EXISTS  backup_detailpd_' . $tahun . ' LIKE pd_detail_siswa');
+
+        if ($tabel_pd_backup && $tabel_staff_backup && $tabel_rombel_backup) {
+            $this->db->query('INSERT INTO backup_peserta_didik_' . $tahun . ' SELECT * FROM pd_peserta_didik');
+            $this->db->query('INSERT INTO backup_staff_' . $tahun . ' SELECT * FROM st_staff');
+            $this->db->query('INSERT INTO backup_rombel_' . $tahun . ' SELECT * FROM pd_rombel');
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function backup_PesertaDidik($data)
     {
         $backup_PesertaDidik = $this->db->on_duplicate('backup_peserta_didik', $data);
@@ -163,7 +198,9 @@ class Model_datatable_pd extends CI_Model
 
     public function insertDetail_PesertaDidik($data)
     {
+        $npsn = get_user_data('npsn');
         $insertDetail_PesertaDidik = $this->db->on_duplicate('pd_detail_siswa', $data);
+        $insertDetail_PesertaDidik = $this->db->where('npsn', $npsn);
         if ($insertDetail_PesertaDidik) {
             return true;
         }
@@ -171,7 +208,9 @@ class Model_datatable_pd extends CI_Model
 
     public function insert_Data_Orangtua($data)
     {
+        $npsn = get_user_data('npsn');
         $insert_Data_Orangtua = $this->db->on_duplicate('pd_orang_tua', $data);
+        $insert_Data_Orangtua = $this->db->where('npsn', $npsn);
         if ($insert_Data_Orangtua) {
             return true;
         }
@@ -179,7 +218,9 @@ class Model_datatable_pd extends CI_Model
 
     public function insert_Data_Wali($data)
     {
+        $npsn = get_user_data('npsn');
         $insert_Data_Wali = $this->db->on_duplicate('pd_data_wali', $data);
+        $insert_Data_Wali = $this->db->where('npsn', $npsn);
         if ($insert_Data_Wali) {
             return true;
         }
@@ -187,7 +228,9 @@ class Model_datatable_pd extends CI_Model
 
     public function insert_Data_rombel($data)
     {
+        $npsn = get_user_data('npsn');
         $insert_Data_rombel = $this->db->on_duplicate('pd_rombel', $data);
+        $insert_Data_rombel = $this->db->where('npsn', $npsn);
         if ($insert_Data_rombel) {
             return true;
         }

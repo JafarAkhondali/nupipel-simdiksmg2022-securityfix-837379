@@ -54,6 +54,10 @@
                                 <img src="<?= BASE_ASSET; ?>/img/loading-spin-primary.svg">
                                 <i><?= 'Harap Tunggu sedang proses'; ?></i>
                             </span>
+                        </div><br>
+                        <div class="box-body" style="margin: auto;">
+                            Download template excel peserta didik keluar <a class="btn btn-block btn-social btn-download" href="<?= BASE_ASSET; ?>template/template_siswa_keluar.xslx" download>
+                                <i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Download Template</a>
                         </div>
                     </form>
                 </div>

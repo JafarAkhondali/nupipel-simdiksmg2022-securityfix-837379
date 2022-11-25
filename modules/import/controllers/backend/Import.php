@@ -21,6 +21,7 @@ class Import extends Admin
 		$this->load->model('model_datatable_pd');
 		$this->load->model('model_datatable_pdkeluar');
 		$this->load->model('model_datatable_pembelajaran');
+		$this->load->model('model_datatable_ceksekolah');
 		$this->load->model('model_sekolah');
 		$this->load->library(array('excel', 'session'));
 	}
@@ -50,11 +51,11 @@ class Import extends Admin
 		}
 
 		$this->load->model('Model_datatable_pd');
-		$this->load->model('Model_sekolah');
+		// $this->load->model('Model_sekolah');
 
 		$kodesekolah = get_user_data('npsn');
-		$this->data['sekolah'] = $this->model_sekolah->DetailSekolah();
-		$this->data['detail_backup'] = $this->model_datatable_pd->getBackup($kodesekolah);
+		// $this->data['sekolah'] = $this->model_sekolah->DetailSekolah();
+		$this->data['detail_backup'] = $this->model_datatable_pd->getBackup();
 		// $this->data['jumlah_siswa_nonaktif'] = $this->model_datatable_pd->count_siswa_by_id($kodesekolah, 'Non Aktif');
 		$this->render('backend/standart/backup', $this->data);
 	}
@@ -295,6 +296,40 @@ class Import extends Admin
 		// $this->output->set_output(json_encode($output));
 	}
 
+
+	function datatableinfo()
+	{
+		// var_dump('tes');
+		// die;
+		header('Content-Type: application/json');
+		$list = $this->model_datatable_ceksekolah->get_datatables();
+
+		$data = array();
+		$no = $this->input->post('start');
+
+		foreach ($list as $datas) {
+			$no++;
+			$row = array();
+
+			$row[] =  '<strong>' . $no . '</strong>';
+			$row[] = $datas->npsn;
+			$row[] = $datas->nama_satuan_pendidikan;
+			$row[] = $datas->bentuk_pendidikan;
+			$row[] = $datas->status_sekolah;
+			$row[] = $datas->alamat;
+			$data[] = $row;
+		}
+		$output = array(
+			"draw" => $this->input->post('draw'),
+			"recordsTotal" => $this->model_datatable_ceksekolah->count_all(),
+			"recordsFiltered" => $this->model_datatable_ceksekolah->count_filtered(),
+			"data" => $data,
+		);
+		//output to json format
+		echo json_encode($output);
+		// $this->output->set_output(json_encode($output));
+	}
+
 	function deleteDataStaff()
 	{
 		$this->model_datatable_staff->delete_by_id();
@@ -319,27 +354,41 @@ class Import extends Admin
 		return  json_encode("del");
 	}
 
+
 	function backupData()
 	{
-		$kodesekolah = get_user_data('npsn');
-		$tahunAjaran = '2022';
-
+		// $kodesekolah = get_user_data('npsn');
+		$tahunAjaran = $this->input->post('tahun');
 		$data = array(
 			'kode' => $this->random(15),
-			'npsn' => $kodesekolah,
 			'tahun' => $tahunAjaran
 		);
 
-		$dataBackup = $this->model_datatable_pd->getBackupDataPd();
-		$backup = $this->model_datatable_pd->backup_PesertaDidik($dataBackup);
+		$dataBackup = $this->model_datatable_pd->Backup_by_tahun($tahunAjaran);
 		$insertBackup = $this->model_datatable_pd->insert_Data_backup($data);
 
-		if ($backup && $insertBackup) {
+		if ($dataBackup || $insertBackup) {
 			set_message('Backup data berhasil', 'success');
 		} else {
 			set_message('Terjadikesalahan, Backup gagal', 'error');
 		}
-		//var_dump($backup);
+
+		// redirect_back();
+	}
+
+
+	function deletebackup($id = null, $tahun = null)
+	{
+		$tahun = $this->input->get('tahun');
+		$id = $this->input->get('id');
+		$hapus = $this->model_datatable_pd->deleteBackupTabel($id, $tahun);
+
+		if ($hapus) {
+			set_message('Hapus backup berhasil', 'success');
+		} else {
+			set_message('Terjadikesalahan, Backup gagal', 'error');
+		}
+		redirect_back();
 	}
 
 	function cekDatatableStaff()
@@ -484,6 +533,7 @@ class Import extends Admin
 					$data_pesertadidik_detail[] = array(
 						// 'id_peserta_didik'    => $nipd,
 						'nisn'    => $nisn,
+						'npsn'    => get_user_data('npsn'),
 						'no_peserta_ujian_nasional'    => $no_peserta_ujian_nasional,
 						'no_seri_ijazah'    => $no_seri_ijazah,
 						'penerima_kip'    => $penerima_kip,
@@ -512,6 +562,7 @@ class Import extends Admin
 					$data_orangtua[] = array(
 						// 'id_peserta_didik'    => $nipd,
 						'nisn'    => $nisn,
+						'npsn'    => get_user_data('npsn'),
 						'nama_ayah'    => $nama_ayah,
 						'tahun_lahir_ayah'    => $tahun_lahir_ayah,
 						'jenjang_pendidikan_ayah'    => $pendidikan_ayah,
@@ -530,6 +581,7 @@ class Import extends Admin
 					$data_wali[] = array(
 						// 'id_peserta_didik'    => $nipd,
 						'nisn'    => $nisn,
+						'npsn'    => get_user_data('npsn'),
 						'nama'    => $nama_wali,
 						'tahun_lahir'    => $tahun_lahir_wali,
 						'jenjang_pendidikan'    => $pendidikan_wali,
@@ -542,6 +594,7 @@ class Import extends Admin
 					$data_rombel[] = array(
 						// 'id_peserta_didik'    => $nipd,
 						'nisn'    => $nisn,
+						'npsn'    => get_user_data('npsn'),
 						'rombel'    => $rombel,
 						'tahun' => $tahun,
 						'created_by'    => get_user_data('npsn')
